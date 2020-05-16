@@ -1,0 +1,27 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
+dependencies {
+    implementation group: 'pl.zlooo.fixyou', name: 'api', version: "$fixyouVersion"
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: "$slf4jVersion"
+    implementation group: 'info.picocli', name: 'picocli', version: "$picocliVersion"
+    implementation group: 'javax.xml.bind', name: 'jaxb-api', version: "$jaxbVersion"
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-impl', version: "$jaxbVersion"
+    implementation group: 'com.sun.xml.bind', name: 'jaxb-core', version: "$jaxbVersion"
+    implementation group: 'com.squareup', name: 'javapoet', version: "$javapoetVersion"
+    implementation group: 'com.sun.activation', name: 'javax.activation', version: "$activationVersion"
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: "$logbackClassicVersion"
+
+    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
+}
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": "pl.zlooo.fixyou.spec.generator.FixSpecGenerator"
+    }
+}

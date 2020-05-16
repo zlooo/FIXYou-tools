@@ -1,0 +1,3 @@
+rootProject.name = 'FIXYouTools'
+include 'performance_tester'
+include 'fix_spec_generator'
