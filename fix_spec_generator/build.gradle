@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    implementation group: 'pl.zlooo.fixyou', name: 'api', version: "$fixyouVersion"
+    implementation group: 'io.github.zlooo.fixyou', name: 'api', version: "$fixyouVersion"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "$slf4jVersion"
     implementation group: 'info.picocli', name: 'picocli', version: "$picocliVersion"
     implementation group: 'javax.xml.bind', name: 'jaxb-api', version: "$jaxbVersion"
@@ -22,6 +22,6 @@ compileJava {
 
 jar {
     manifest {
-        attributes "Main-Class": "pl.zlooo.fixyou.spec.generator.FixSpecGenerator"
+        attributes "Main-Class": "io.github.zlooo.spec.generator.FixSpecGenerator"
     }
 }

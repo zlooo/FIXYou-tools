@@ -3,7 +3,7 @@ plugins{
 }
 
 dependencies {
-    implementation group: 'pl.zlooo.fixyou', name: 'netty', version: "$fixyouVersion"
+    implementation group: 'io.github.zlooo.fixyou', name: 'netty', version: "$fixyouVersion"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "$slf4jVersion"
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: "$logbackClassicVersion"
     implementation group: 'info.picocli', name: 'picocli', version: "$picocliVersion"
@@ -23,6 +23,6 @@ compileJava {
 
 jar {
     manifest {
-        attributes "Main-Class": "pl.zlooo.fixyou.performance.tester.PerformanceTester"
+        attributes "Main-Class": "io.github.zlooo.performance.tester.PerformanceTester"
     }
 }
