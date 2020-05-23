@@ -32,7 +32,7 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final int port = (int) config.get("port");
         final SessionID sessionID = createSessionID(config);
         log.info("About to start FIXYou for session {} listening on port {}", sessionID, port);
-        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).build(), createFixMessageListener(scenarioId));
+        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().numberOfIOThreads(4).acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).build(), createFixMessageListener(scenarioId));
         engine.registerSessionAndDictionary(sessionID, "fix50sp2", minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port)).start().get();
         log.info("FIXYou started");
         System.out.println("Press any key when test is done");
