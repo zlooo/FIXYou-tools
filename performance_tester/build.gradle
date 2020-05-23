@@ -13,6 +13,9 @@ dependencies {
     implementation group: 'org.yaml', name: 'snakeyaml', version: "$snakeyamlVersion"
     implementation group: 'com.github.ben-manes.caffeine', name: 'caffeine', version: "$caffeineVersion"
     implementation group: 'org.agrona', name: 'agrona', version: "$agronaVersion"
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'gc-monitor', version: "$gcMonitorVersion"
+    implementation group: 'com.github.vladimir-bukhtoyarov', name: 'rolling-metrics-core', version: "$rollingMetricsCoreVersion"
+    implementation group: 'org.hdrhistogram', name: 'HdrHistogram', version: "$hdrHistogramVersion"
 
     annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
 }
