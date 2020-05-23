@@ -1,11 +1,10 @@
 package io.github.zlooo.performance.tester.fix;
 
+import io.github.zlooo.fixyou.parser.model.CharArrayField;
+import io.github.zlooo.fixyou.parser.model.CharField;
+import io.github.zlooo.fixyou.parser.model.DoubleField;
+import io.github.zlooo.fixyou.parser.model.FixMessage;
 import lombok.experimental.UtilityClass;
-import pl.zlooo.fixyou.FixConstants;
-import pl.zlooo.fixyou.parser.model.CharArrayField;
-import pl.zlooo.fixyou.parser.model.CharField;
-import pl.zlooo.fixyou.parser.model.DoubleField;
-import pl.zlooo.fixyou.parser.model.FixMessage;
 import quickfix.Message;
 import quickfix.SessionID;
 import quickfix.field.*;
@@ -63,7 +62,7 @@ public class FixMessages {
 
     public static FixMessage toExecutionReport(FixMessage fixMessage, char[] executionId, char execType, char orderStatus, char[] orderId) {
         fixMessage.resetDataFields(io.github.zlooo.performance.tester.fix.FixConstants.CLORD_ID_FIELD_NUMBER);
-        fixMessage.<CharArrayField>getField(FixConstants.MESSAGE_TYPE_FIELD_NUMBER).setValue(io.github.zlooo.performance.tester.fix.FixConstants.EXECUTION_REPORT);
+        fixMessage.<CharArrayField>getField(io.github.zlooo.fixyou.FixConstants.MESSAGE_TYPE_FIELD_NUMBER).setValue(io.github.zlooo.performance.tester.fix.FixConstants.EXECUTION_REPORT);
         fixMessage.<CharArrayField>getField(io.github.zlooo.performance.tester.fix.FixConstants.ORDER_ID_FIELD_NUMBER).setValue(orderId);
         fixMessage.<CharArrayField>getField(io.github.zlooo.performance.tester.fix.FixConstants.EXEC_ID_FIELD_NUMBER).setValue(executionId);
         fixMessage.<CharField>getField(io.github.zlooo.performance.tester.fix.FixConstants.EXEC_TYPE_FIELD_NUMBER).setValue(execType);

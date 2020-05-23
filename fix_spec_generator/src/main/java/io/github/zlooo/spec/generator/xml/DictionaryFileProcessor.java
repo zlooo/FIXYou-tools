@@ -1,13 +1,13 @@
 package io.github.zlooo.spec.generator.xml;
 
-import io.github.zlooo.spec.generator.xml.model.MessageType;
-import lombok.Data;
-import pl.zlooo.fixyou.model.ApplicationVersionID;
-import pl.zlooo.fixyou.model.FieldType;
-import pl.zlooo.fixyou.model.FixSpec;
+import io.github.zlooo.fixyou.model.ApplicationVersionID;
+import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 import io.github.zlooo.spec.generator.xml.model.ComponentType;
 import io.github.zlooo.spec.generator.xml.model.FixType;
 import io.github.zlooo.spec.generator.xml.model.GroupType;
+import io.github.zlooo.spec.generator.xml.model.MessageType;
+import lombok.Data;
 
 import java.util.*;
 import java.util.function.BiFunction;

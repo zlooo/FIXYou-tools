@@ -1,8 +1,8 @@
 package io.github.zlooo.performance.tester.fixyou;
 
-import pl.zlooo.fixyou.model.ApplicationVersionID;
-import pl.zlooo.fixyou.model.FieldType;
-import pl.zlooo.fixyou.model.FixSpec;
+import io.github.zlooo.fixyou.model.ApplicationVersionID;
+import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

@@ -1,10 +1,10 @@
 package io.github.zlooo.spec.generator;
 
 import com.squareup.javapoet.*;
+import io.github.zlooo.fixyou.model.ApplicationVersionID;
+import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
-import pl.zlooo.fixyou.model.ApplicationVersionID;
-import pl.zlooo.fixyou.model.FieldType;
-import pl.zlooo.fixyou.model.FixSpec;
 
 import javax.lang.model.element.Modifier;
 import java.util.HashMap;

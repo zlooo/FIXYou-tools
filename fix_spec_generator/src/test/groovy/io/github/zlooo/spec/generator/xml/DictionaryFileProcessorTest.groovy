@@ -1,9 +1,8 @@
 package io.github.zlooo.spec.generator.xml
 
-
+import io.github.zlooo.fixyou.model.FieldType
+import io.github.zlooo.fixyou.model.FixSpec
 import org.assertj.core.api.Assertions
-import pl.zlooo.fixyou.model.FieldType
-import pl.zlooo.fixyou.model.FixSpec
 import io.github.zlooo.spec.generator.xml.model.XMLModelTest
 import spock.lang.Specification
 

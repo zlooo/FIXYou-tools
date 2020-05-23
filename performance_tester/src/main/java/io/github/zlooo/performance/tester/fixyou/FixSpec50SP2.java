@@ -1,12 +1,14 @@
 package io.github.zlooo.performance.tester.fixyou;
 
-import pl.zlooo.fixyou.model.ApplicationVersionID;
-import pl.zlooo.fixyou.model.FieldType;
+
+import io.github.zlooo.fixyou.model.ApplicationVersionID;
+import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public final class FixSpec50SP2 implements pl.zlooo.fixyou.model.FixSpec {
+public final class FixSpec50SP2 implements FixSpec {
     private static final Map<Integer, FieldNumberTypePair[]> REPEATING_GROUPS = createRepeatingGroups();
 
     private static Map<Integer, FieldNumberTypePair[]> createRepeatingGroups(

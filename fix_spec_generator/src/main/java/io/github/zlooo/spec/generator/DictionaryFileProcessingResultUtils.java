@@ -1,9 +1,9 @@
 package io.github.zlooo.spec.generator;
 
+import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import pl.zlooo.fixyou.model.FieldType;
-import pl.zlooo.fixyou.model.FixSpec;
 import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 
 import java.util.Arrays;
