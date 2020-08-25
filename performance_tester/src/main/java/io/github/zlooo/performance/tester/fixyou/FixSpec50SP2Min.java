@@ -16,8 +16,8 @@ public class FixSpec50SP2Min implements FixSpec {
     @Nonnull
     @Override
     public FieldType[] getTypes() {
-        return new FieldType[]{FieldType.CHAR_ARRAY, FieldType.LONG, FieldType.CHAR_ARRAY, FieldType.LONG, FieldType.CHAR_ARRAY, FieldType.CHAR_ARRAY, FieldType.CHAR_ARRAY, FieldType.CHAR_ARRAY, FieldType.DOUBLE, FieldType.CHAR_ARRAY,
-                FieldType.CHAR_ARRAY, FieldType.CHAR, FieldType.CHAR, FieldType.CHAR, FieldType.CHAR_ARRAY, FieldType.CHAR_ARRAY, FieldType.CHAR, FieldType.DOUBLE, FieldType.LONG, FieldType.LONG, FieldType.BOOLEAN, FieldType.CHAR_ARRAY,
+        return new FieldType[]{FieldType.CHAR_ARRAY, FieldType.LONG, FieldType.CHAR_ARRAY, FieldType.LONG, FieldType.CHAR_ARRAY, FieldType.TIMESTAMP, FieldType.CHAR_ARRAY, FieldType.CHAR_ARRAY, FieldType.DOUBLE, FieldType.CHAR_ARRAY,
+                FieldType.CHAR_ARRAY, FieldType.CHAR, FieldType.CHAR, FieldType.CHAR, FieldType.CHAR_ARRAY, FieldType.TIMESTAMP, FieldType.CHAR, FieldType.DOUBLE, FieldType.LONG, FieldType.LONG, FieldType.BOOLEAN, FieldType.CHAR_ARRAY,
                 FieldType.CHAR_ARRAY};
     }
 

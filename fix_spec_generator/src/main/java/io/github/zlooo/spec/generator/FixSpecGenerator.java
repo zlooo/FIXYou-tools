@@ -3,6 +3,7 @@ package io.github.zlooo.spec.generator;
 import com.squareup.javapoet.JavaFile;
 import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 import io.github.zlooo.spec.generator.xml.model.FixType;
+import io.github.zlooo.spec.generator.xml.model.ObjectFactory;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,7 +41,7 @@ public class FixSpecGenerator implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        final Unmarshaller unmarshaller = JAXBContext.newInstance("pl.zlooo.fixyou.spec.generator.xml.model").createUnmarshaller();
+        final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class.getPackageName()).createUnmarshaller();
         final List<DictionaryFileProcessor.Result> singleFileResults = new ArrayList<>(files.size());
         for (final File file : files) {
             final JAXBElement<FixType> unmarshallingResult = (JAXBElement<FixType>) unmarshaller.unmarshal(file);

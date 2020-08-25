@@ -149,7 +149,7 @@ public class DictionaryFileProcessor {
         result.put("CURRENCY", FieldType.CHAR_ARRAY);
         result.put("EXCHANGE", FieldType.CHAR_ARRAY);
         result.put("MONTHYEAR", FieldType.CHAR_ARRAY);
-        result.put("UTCTIMESTAMP", FieldType.CHAR_ARRAY);
+        result.put("UTCTIMESTAMP", FieldType.TIMESTAMP);
         result.put("UTCTIMEONLY", FieldType.CHAR_ARRAY);
         result.put("UTCDATEONLY", FieldType.CHAR_ARRAY);
         result.put("LOCALMKTDATE", FieldType.CHAR_ARRAY);

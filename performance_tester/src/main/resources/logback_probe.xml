@@ -7,7 +7,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>perfTester_server.log</file>
+        <file>perfTester.log</file>
         <append>true</append>
         <immediateFlush>true</immediateFlush>
         <encoder>
@@ -21,15 +21,7 @@
         <appender-ref ref="FILE" />
     </appender>
 
-<!--   <logger name="io.github.zlooo.fixyou.commons.pool" level="trace"/>-->
-   <logger name="io.github.zlooo.fixyou.netty.handler.MessageDecoder" level="debug"/>
-<!--   <logger name="io.github.zlooo.fixyou.netty.handler.SessionHandler" level="trace"/>-->
-   <logger name="io.github.zlooo.fixyou.parser.FixMessageParser" level="trace"/>
-   <logger name="io.github.zlooo.fixyou.parser.model.CharSequenceField" level="trace"/>
-<!--   <logger name="io.netty.handler.logging.LoggingHandler" level="debug"/>-->
-<!--   <logger name="io.github.zlooo.fixyou.netty.handler.AbstractMessageEncoder" level="trace"/>-->
-
     <root level="info">
-        <appender-ref ref="ASYNC" />
+        <appender-ref ref="FILE" />
     </root>
 </configuration>

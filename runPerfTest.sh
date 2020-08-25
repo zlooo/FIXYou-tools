@@ -7,7 +7,7 @@ function testRun {
   echo "Run - $1k/$2k"
   for i in {1..10}
   do
-    $java -Dlogback.configurationFile=performance_tester/src/main/resources/logback.xml -jar "performance_tester/build/libs/performance_tester-$perfTesterVersion-all.jar" -c performance_tester/src/main/resources/defaults.yaml probe initiator -s newOrderSingleSending -w "$1000" -t "$2000"
+    $java -Dlogback.configurationFile=performance_tester/src/main/resources/logback_probe.xml -jar "performance_tester/build/libs/performance_tester-$perfTesterVersion-all.jar" -c performance_tester/src/main/resources/defaults.yaml probe initiator -s newOrderSingleSending -w "$1000" -t "$2000"
     echo $i
     if [ $? != 0 ]; then
       echo "Something went wrong in run $i, check the logs"

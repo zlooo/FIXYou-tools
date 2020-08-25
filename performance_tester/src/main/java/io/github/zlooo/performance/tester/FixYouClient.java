@@ -32,10 +32,10 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final int port = (int) config.get("port");
         final SessionID sessionID = createSessionID(config);
         log.info("About to start FIXYou for session {} listening on port {}", sessionID, port);
-        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().numberOfIOThreads(4).acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).build(), createFixMessageListener(scenarioId));
-        engine.registerSessionAndDictionary(sessionID, "fix50sp2", minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port)).start().get();
+        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).separateIoFromAppThread(true).build(), createFixMessageListener(scenarioId));
+        engine.registerSessionAndDictionary(sessionID, "fix50sp2", minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port).setConsolidateFlushes(true)).start().get();
         log.info("FIXYou started");
-        System.out.println("Press any key when test is done");
+        System.out.println("Press enter when test is done");
         System.in.read();
         log.info("Stopping FIXYou");
         engine.stop().get();
@@ -44,7 +44,10 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
     }
 
     private SessionID createSessionID(Map<String, Object> config) {
-        return new SessionID(((String) config.get("beginString")).toCharArray(), ((String) config.get("senderCompId")).toCharArray(), ((String) config.get("targetCompId")).toCharArray());
+        final String beginString = (String) config.get("beginString");
+        final String senderCompId = (String) config.get("senderCompId");
+        final String targetCompId = (String) config.get("targetCompId");
+        return new SessionID(beginString.toCharArray(), beginString.length(), senderCompId.toCharArray(), senderCompId.length(), targetCompId.toCharArray(), targetCompId.length());
     }
 
     @Override

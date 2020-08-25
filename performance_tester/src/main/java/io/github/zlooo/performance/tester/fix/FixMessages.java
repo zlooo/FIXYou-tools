@@ -1,7 +1,7 @@
 package io.github.zlooo.performance.tester.fix;
 
-import io.github.zlooo.fixyou.parser.model.CharArrayField;
 import io.github.zlooo.fixyou.parser.model.CharField;
+import io.github.zlooo.fixyou.parser.model.CharSequenceField;
 import io.github.zlooo.fixyou.parser.model.DoubleField;
 import io.github.zlooo.fixyou.parser.model.FixMessage;
 import lombok.experimental.UtilityClass;
@@ -60,14 +60,18 @@ public class FixMessages {
         return executionReport.toString();
     }
 
-    public static FixMessage toExecutionReport(FixMessage fixMessage, char[] executionId, char execType, char orderStatus, char[] orderId) {
-        fixMessage.resetDataFields(io.github.zlooo.performance.tester.fix.FixConstants.CLORD_ID_FIELD_NUMBER);
-        fixMessage.<CharArrayField>getField(io.github.zlooo.fixyou.FixConstants.MESSAGE_TYPE_FIELD_NUMBER).setValue(io.github.zlooo.performance.tester.fix.FixConstants.EXECUTION_REPORT);
-        fixMessage.<CharArrayField>getField(io.github.zlooo.performance.tester.fix.FixConstants.ORDER_ID_FIELD_NUMBER).setValue(orderId);
-        fixMessage.<CharArrayField>getField(io.github.zlooo.performance.tester.fix.FixConstants.EXEC_ID_FIELD_NUMBER).setValue(executionId);
+    public static FixMessage  toExecutionReport(FixMessage fixMessage, char[] executionId, char execType, char orderStatus, char[] orderId) {
+        final CharSequenceField clordIdField = fixMessage.getField(FixConstants.CLORD_ID_FIELD_NUMBER);
+        final int clordidLength = clordIdField.getValue().length();
+        final char[] clordIdAsCharArr = clordIdField.getUnderlyingValue();
+        fixMessage.resetAllDataFieldsAndReleaseByteSource();
+        fixMessage.<CharSequenceField>getField(FixConstants.CLORD_ID_FIELD_NUMBER).setValue(clordIdAsCharArr, clordidLength);
+        fixMessage.<CharSequenceField>getField(io.github.zlooo.fixyou.FixConstants.MESSAGE_TYPE_FIELD_NUMBER).setValue(io.github.zlooo.performance.tester.fix.FixConstants.EXECUTION_REPORT);
+        fixMessage.<CharSequenceField>getField(io.github.zlooo.performance.tester.fix.FixConstants.ORDER_ID_FIELD_NUMBER).setValue(orderId);
+        fixMessage.<CharSequenceField>getField(io.github.zlooo.performance.tester.fix.FixConstants.EXEC_ID_FIELD_NUMBER).setValue(executionId);
         fixMessage.<CharField>getField(io.github.zlooo.performance.tester.fix.FixConstants.EXEC_TYPE_FIELD_NUMBER).setValue(execType);
         fixMessage.<CharField>getField(io.github.zlooo.performance.tester.fix.FixConstants.ORD_STATUS_FIELD_NUMBER).setValue(orderStatus);
-        fixMessage.<CharArrayField>getField(io.github.zlooo.performance.tester.fix.FixConstants.SYMBOL_FIELD_NUMBER).setValue(VODL);
+        fixMessage.<CharSequenceField>getField(io.github.zlooo.performance.tester.fix.FixConstants.SYMBOL_FIELD_NUMBER).setValue(VODL);
         fixMessage.<CharField>getField(io.github.zlooo.performance.tester.fix.FixConstants.SIDE_FIELD_NUMBER).setValue('1');
         fixMessage.<DoubleField>getField(io.github.zlooo.performance.tester.fix.FixConstants.LEAVES_QTY_FIELD_NUMBER).setValue(LEAVES_QTY_LONG, (short) 0);
         fixMessage.<DoubleField>getField(io.github.zlooo.performance.tester.fix.FixConstants.CUM_QTY_FIELD_NUMBER).setValue(CUM_QTY_LONG, (short) 0);

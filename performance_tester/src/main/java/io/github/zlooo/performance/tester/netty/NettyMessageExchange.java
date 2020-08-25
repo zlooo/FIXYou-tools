@@ -33,7 +33,7 @@ public class NettyMessageExchange implements MessageExchange<String> {
 
     @Override
     public void sendMessage(@Nonnull String message) {
-        channel.write(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        channel.write(message).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE).addListener(ChannelFutureListener.CLOSE_ON_FAILURE);
     }
 
     @Nullable

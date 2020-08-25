@@ -7,8 +7,8 @@ probe:
     targetCompId: testedApp
 fixyou:
   acceptor:
-    bindInterface: 169.254.216.70
-#    bindInterface: localhost
+#    bindInterface: 169.254.216.70
+    bindInterface: localhost
     port: 1234
     beginString: FIXT.1.1
     senderCompId: testedApp
