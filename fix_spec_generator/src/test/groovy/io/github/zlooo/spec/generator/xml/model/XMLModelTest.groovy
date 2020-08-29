@@ -11,7 +11,7 @@ import java.util.stream.Collectors
 class XMLModelTest extends Specification {
 
     public static final List<File> STANDARD_DICTIONARIES = getDictionaries()
-    private static final Unmarshaller unmarshaller = JAXBContext.newInstance("pl.zlooo.fixyou.spec.generator.xml.model").createUnmarshaller()
+    private static final Unmarshaller unmarshaller = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller()
 
     static List<File> getDictionaries() {
         def testResources = ClassLoader.getSystemResources("").toList().stream().filter({ url -> url.toExternalForm().contains("test") }).filter({ url -> url.toExternalForm().contains("resources") }).map({ url -> url.toURI() }).collect(

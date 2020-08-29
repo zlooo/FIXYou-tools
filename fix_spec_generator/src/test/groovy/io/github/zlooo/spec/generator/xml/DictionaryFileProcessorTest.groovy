@@ -2,6 +2,7 @@ package io.github.zlooo.spec.generator.xml
 
 import io.github.zlooo.fixyou.model.FieldType
 import io.github.zlooo.fixyou.model.FixSpec
+import io.github.zlooo.spec.generator.xml.model.FixType
 import org.assertj.core.api.Assertions
 import io.github.zlooo.spec.generator.xml.model.XMLModelTest
 import spock.lang.Specification
@@ -15,7 +16,7 @@ class DictionaryFileProcessorTest extends Specification {
 
     def "should process default fix 50sp2 dictionary"() {
         setup:
-        JAXBElement<io.github.zlooo.spec.generator.xml.model.FixType> fix50sp2 = JAXBContext.newInstance("pl.zlooo.fixyou.spec.generator.xml.model").createUnmarshaller().unmarshal(XMLModelTest.STANDARD_DICTIONARIES.find { file -> file.getName() == "FIX50SP2.xml" })
+        JAXBElement<FixType> fix50sp2 = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller().unmarshal(XMLModelTest.STANDARD_DICTIONARIES.find { file -> file.getName() == "FIX50SP2.xml" })
 
         when:
         def result = dictionaryFileProcessor.process(fix50sp2.getValue())

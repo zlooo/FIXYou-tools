@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class PerformanceTester implements Callable<Integer> {
 
     private static final String DEFAULT_CONFIG_FILE_NAME = "/defaults.yaml";
+    private static final int GC_MONITOR_INTERVAL_SECONDS = 10;
     @CommandLine.Option(names = {"-c", "--config"}, description = "Configuration file that should be used")
     private Path configFile;
     @CommandLine.Option(names = {"-g", "--gc-monitor"}, description = "Turn on gc-monitor, defaults to ${DEFAULT-VALUE}", defaultValue = "false")
@@ -67,7 +68,7 @@ public class PerformanceTester implements Callable<Integer> {
         gcMonitor.start();
         while (true) {
             log.info("GC stats snapshot - {}", gcMonitor.getSnapshot());
-            Thread.sleep(TimeUnit.SECONDS.toMillis(10));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(GC_MONITOR_INTERVAL_SECONDS));
         }
     }
 }

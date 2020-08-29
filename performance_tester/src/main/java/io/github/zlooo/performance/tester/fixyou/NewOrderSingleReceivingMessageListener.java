@@ -10,8 +10,6 @@ import io.github.zlooo.performance.tester.fix.FixMessages;
 import io.netty.channel.ChannelFutureListener;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 @Slf4j
 public class NewOrderSingleReceivingMessageListener extends AbstractNettyAwareFixMessageListener {
 
