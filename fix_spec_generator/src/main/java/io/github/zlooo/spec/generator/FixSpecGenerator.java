@@ -41,7 +41,7 @@ public class FixSpecGenerator implements Callable<Integer> {
 
     @Override
     public Integer call() throws Exception {
-        final Unmarshaller unmarshaller = JAXBContext.newInstance(ObjectFactory.class.getPackageName()).createUnmarshaller();
+        final Unmarshaller unmarshaller = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller();
         final List<DictionaryFileProcessor.Result> singleFileResults = new ArrayList<>(files.size());
         for (final File file : files) {
             final JAXBElement<FixType> unmarshallingResult = (JAXBElement<FixType>) unmarshaller.unmarshal(file);
