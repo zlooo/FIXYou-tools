@@ -22,14 +22,15 @@
     </appender>
 
 <!--   <logger name="io.github.zlooo.fixyou.commons.pool" level="trace"/>-->
-   <logger name="io.github.zlooo.fixyou.netty.handler.MessageDecoder" level="debug"/>
+<!--   <logger name="io.github.zlooo.fixyou.netty.handler.MessageDecoder" level="debug"/>-->
+<!--   <logger name="io.github.zlooo.fixyou.commons.ByteBufComposer" level="debug"/>-->
 <!--   <logger name="io.github.zlooo.fixyou.netty.handler.SessionHandler" level="trace"/>-->
-   <logger name="io.github.zlooo.fixyou.parser.FixMessageParser" level="trace"/>
-   <logger name="io.github.zlooo.fixyou.parser.model.CharSequenceField" level="trace"/>
+<!--   <logger name="io.github.zlooo.fixyou.parser.FixMessageParser" level="trace"/>-->
+<!--   <logger name="io.github.zlooo.fixyou.parser.model.CharSequenceField" level="trace"/>-->
 <!--   <logger name="io.netty.handler.logging.LoggingHandler" level="debug"/>-->
 <!--   <logger name="io.github.zlooo.fixyou.netty.handler.AbstractMessageEncoder" level="trace"/>-->
 
-    <root level="info">
+    <root level="warn">
         <appender-ref ref="ASYNC" />
     </root>
 </configuration>

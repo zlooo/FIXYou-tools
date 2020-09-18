@@ -16,7 +16,8 @@ function testRun {
   done
   mv perfTester.log "perfTester_$1_$2.log"
 }
-
+echo "Global warmup"
+$java -Dlogback.configurationFile=performance_tester/src/main/resources/logback_probe.xml -jar "performance_tester/build/libs/performance_tester-$perfTesterVersion-all.jar" -c performance_tester/src/main/resources/defaults.yaml probe initiator -s newOrderSingleSending -w 100000 -t 0
 testRun 1 1
 testRun 2 5
 testRun 3 10
