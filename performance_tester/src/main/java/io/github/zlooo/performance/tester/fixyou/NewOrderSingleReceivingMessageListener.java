@@ -1,13 +1,14 @@
 package io.github.zlooo.performance.tester.fixyou;
 
+import io.github.zlooo.fixyou.commons.pool.ObjectPool;
 import io.github.zlooo.fixyou.netty.AbstractNettyAwareFixMessageListener;
-import io.github.zlooo.fixyou.netty.NettyHandlerAwareSessionState;
-import io.github.zlooo.fixyou.parser.model.CharSequenceField;
+import io.github.zlooo.fixyou.parser.model.Field;
 import io.github.zlooo.fixyou.parser.model.FixMessage;
 import io.github.zlooo.fixyou.session.SessionID;
 import io.github.zlooo.performance.tester.fix.FixConstants;
 import io.github.zlooo.performance.tester.fix.FixMessages;
 import io.netty.channel.ChannelFutureListener;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -15,25 +16,21 @@ public class NewOrderSingleReceivingMessageListener extends AbstractNettyAwareFi
 
     private final char[] execID = new char[]{'0', '0', '0', '0', '0'};
     private final char[] orderID = new char[]{'0', '0', '0', '0', '0'};
+    @Setter
+    private ObjectPool<FixMessage> fixMessageObjectPool;
 
     @Override
     public void onFixMessage(SessionID sessionID, FixMessage fixMessage) {
-        fixMessage.retain();
-        final CharSequenceField clordIdField = fixMessage.getField(FixConstants.CLORD_ID_FIELD_NUMBER);
-        clordIdField.getValue(); //just to trigger parsing
-        final NettyHandlerAwareSessionState sessionState = NettyHandlerAwareSessionState.getForChannel(getChannel());
-        final FixMessage newOrderExecutionReport = getFixMessageFromPool(sessionState);
-        newOrderExecutionReport.<CharSequenceField>getField(FixConstants.CLORD_ID_FIELD_NUMBER).setValue(clordIdField);
-        final FixMessage filledOrderExecutionReport = getFixMessageFromPool(sessionState);
-        filledOrderExecutionReport.<CharSequenceField>getField(FixConstants.CLORD_ID_FIELD_NUMBER).setValue(clordIdField);
-        getChannel().write(FixMessages.toExecutionReport(fixMessage, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().write(FixMessages.toExecutionReport(newOrderExecutionReport, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().writeAndFlush(FixMessages.toExecutionReport(filledOrderExecutionReport, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        final Field clordIdField = fixMessage.getField(FixConstants.CLORD_ID_FIELD_NUMBER);
+        clordIdField.getCharSequenceValue(); //just to trigger parsing
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().writeAndFlush(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
-    private FixMessage getFixMessageFromPool(NettyHandlerAwareSessionState sessionState) {
+    private FixMessage getFixMessageFromPool() {
         FixMessage fixMessage;
-        while ((fixMessage = sessionState.getFixMessageWritePool().tryGetAndRetain()) == null) {
+        while ((fixMessage = fixMessageObjectPool.tryGetAndRetain()) == null) {
             Thread.yield();
         }
         return fixMessage;

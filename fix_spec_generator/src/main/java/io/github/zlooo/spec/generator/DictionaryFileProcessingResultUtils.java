@@ -1,13 +1,13 @@
 package io.github.zlooo.spec.generator;
 
 import io.github.zlooo.fixyou.model.FieldType;
-import io.github.zlooo.fixyou.model.FixSpec;
+import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
-import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.BinaryOperator;
 
@@ -28,7 +28,7 @@ class DictionaryFileProcessingResultUtils {
         if (processingResult.getApplicationVersionID() == null) {
             throw new FixSpecGeneratorException("Application version id must be set");
         }
-        for (final Map.Entry<Integer, FixSpec.FieldNumberTypePair[]> entry : processingResult.getRepeatingGroups().entrySet()) {
+        for (final Map.Entry<Integer, int[]> entry : processingResult.getRepeatingGroups().entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null || entry.getValue().length < 1) {
                 throw new FixSpecGeneratorException("Repeating group definitions cannot contain null key or value. Also value's length must be greater than 0, entry inspected " + entry.getKey() + "=" + Arrays.toString(entry.getValue()));
             }
@@ -50,39 +50,22 @@ class DictionaryFileProcessingResultUtils {
             if (result1.getApplicationVersionID() != result2.getApplicationVersionID()) {
                 throw new FixSpecGeneratorException("Different application version ids defined in multiple files! Versions received " + result1.getApplicationVersionID() + " and " + result2.getApplicationVersionID());
             }
-            final Map<Integer, FixSpec.FieldNumberTypePair[]> repeatingGroups = result1.getRepeatingGroups();
-            for (final Map.Entry<Integer, FixSpec.FieldNumberTypePair[]> entry : result2.getRepeatingGroups().entrySet()) {
-                final FixSpec.FieldNumberTypePair[] repeatingGroupDefinition = repeatingGroups.get(entry.getKey());
-                if (repeatingGroupDefinition == null) {
+            final Map<Integer, int[]> repeatingGroups = result1.getRepeatingGroups();
+            for (final Map.Entry<Integer, int[]> entry : result2.getRepeatingGroups().entrySet()) {
+                final int[] repeatingGroupFieldNumbers = repeatingGroups.get(entry.getKey());
+                if (repeatingGroupFieldNumbers == null) {
                     repeatingGroups.put(entry.getKey(), entry.getValue());
-                } else if (!Arrays.equals(repeatingGroupDefinition, entry.getValue())) {
-                    log.warn("The same repeating group defined in multiple files but they contain different fields. They will be merged if possible. Group number {}, definition 1 {}, definition 2 {}", entry.getKey(),
-                             Arrays.toString(repeatingGroupDefinition),
+                } else if (!Arrays.equals(repeatingGroupFieldNumbers, entry.getValue())) {
+                    log.warn("The same repeating group defined in multiple files but they contain different fields, they will be merged. Group number {}, definition 1 {}, definition 2 {}", entry.getKey(),
+                             Arrays.toString(repeatingGroupFieldNumbers),
                              Arrays.toString(entry.getValue()));
-                    final Map<Integer, FixSpec.FieldNumberTypePair> mergeResult = mergeRepeatingGroupsIfPossible(entry, repeatingGroupDefinition);
-                    repeatingGroups.put(entry.getKey(), mergeResult.values().toArray(new FixSpec.FieldNumberTypePair[]{}));
+                    final List<Integer> mergeResult = new ArrayList<>(); //List not set because we want to preserve order
+                    Arrays.stream(entry.getValue()).forEach(mergeResult::add);
+                    Arrays.stream(repeatingGroupFieldNumbers).forEach(mergeResult::add);
+                    repeatingGroups.put(entry.getKey(), mergeResult.stream().distinct().mapToInt(Integer::intValue).toArray());
                 }
             }
             return result1;
         };
-    }
-
-    private static Map<Integer, FixSpec.FieldNumberTypePair> mergeRepeatingGroupsIfPossible(Map.Entry<Integer, FixSpec.FieldNumberTypePair[]> entry,
-                                                                                            FixSpec.FieldNumberTypePair[] repeatingGroupDefinition) {
-        final Map<Integer, FixSpec.FieldNumberTypePair> mergeResult = new HashMap<>();
-        for (final FixSpec.FieldNumberTypePair definition : repeatingGroupDefinition) {
-            mergeResult.put(definition.getFieldNumber(), definition);
-        }
-        for (final FixSpec.FieldNumberTypePair definition2 : entry.getValue()) {
-            final FixSpec.FieldNumberTypePair definitionFromMergingProcess = mergeResult.get(definition2.getFieldNumber());
-            if (definitionFromMergingProcess == null) {
-                mergeResult.put(definition2.getFieldNumber(), definition2);
-            } else if (definitionFromMergingProcess.getFieldType() != definition2.getFieldType()) {
-                throw new FixSpecGeneratorException(
-                        "Could not merge group with number " + entry.getKey() + ", two sources define the same field but with different type, field " + definitionFromMergingProcess.getFieldNumber() + ", type 1 " +
-                        definitionFromMergingProcess.getFieldType() + ", type 2 " + definition2.getFieldType());
-            }
-        }
-        return mergeResult;
     }
 }

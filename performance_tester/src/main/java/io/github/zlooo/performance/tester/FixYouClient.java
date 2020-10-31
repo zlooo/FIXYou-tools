@@ -32,8 +32,10 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final int port = (int) config.get("port");
         final SessionID sessionID = createSessionID(config);
         log.info("About to start FIXYou for session {} listening on port {}", sessionID, port);
-        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).separateIoFromAppThread(true).build(), createFixMessageListener(scenarioId));
-        engine.registerSessionAndDictionary(sessionID, "fix50sp2", minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port).setConsolidateFlushes(true)).start().get();
+        final FixMessageListener fixMessageListener = createFixMessageListener(scenarioId);
+        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).separateIoFromAppThread(true).build(), fixMessageListener);
+        wire(fixMessageListener, engine);
+        engine.registerSession(sessionID, minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port).setConsolidateFlushes(true)).start().get();
         log.info("FIXYou started");
         System.out.println("Press enter when test is done");
         System.in.read();
@@ -61,6 +63,12 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
                 return new NewOrderSingleReceivingMessageListener();
             default:
                 throw new PerformanceTesterException("Unrecognized scenario id " + scenarioId);
+        }
+    }
+
+    private void wire(FixMessageListener fixMessageListener, Engine engine) {
+        if (fixMessageListener instanceof NewOrderSingleReceivingMessageListener) {
+            ((NewOrderSingleReceivingMessageListener) fixMessageListener).setFixMessageObjectPool(FIXYouNetty.fixMessagePool(engine));
         }
     }
 }

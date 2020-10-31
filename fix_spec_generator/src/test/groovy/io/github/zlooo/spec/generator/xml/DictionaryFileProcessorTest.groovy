@@ -1,10 +1,9 @@
 package io.github.zlooo.spec.generator.xml
 
-import io.github.zlooo.fixyou.model.FieldType
-import io.github.zlooo.fixyou.model.FixSpec
+
 import io.github.zlooo.spec.generator.xml.model.FixType
-import org.assertj.core.api.Assertions
 import io.github.zlooo.spec.generator.xml.model.XMLModelTest
+import org.assertj.core.api.Assertions
 import spock.lang.Specification
 
 import javax.xml.bind.JAXBContext
@@ -26,12 +25,10 @@ class DictionaryFileProcessorTest extends Specification {
         //NoRelatedSym group contains this component so it should contain it's fields
         result.getRepeatingGroups().containsKey(146)
         Assertions.
-                assertThat(result.getRepeatingGroups().get(146)).contains(new FixSpec.FieldNumberTypePair(FieldType.LONG, 668), new FixSpec.FieldNumberTypePair(FieldType.DOUBLE, 869), new FixSpec.FieldNumberTypePair(FieldType.GROUP, 870))
+                assertThat(result.getRepeatingGroups().get(146)).contains(668, 869, 870)
         //Parties component - component that has repeating group in it, also repeating group inside repeating group
         result.getRepeatingGroups().containsKey(453)
         Assertions.
-                assertThat(result.getRepeatingGroups().get(453)).
-                containsExactlyInAnyOrder(new FixSpec.FieldNumberTypePair(FieldType.CHAR_ARRAY, 448), new FixSpec.FieldNumberTypePair(FieldType.CHAR, 447), new FixSpec.FieldNumberTypePair(FieldType.LONG, 452),
-                                          new FixSpec.FieldNumberTypePair(FieldType.GROUP, 802))
+                assertThat(result.getRepeatingGroups().get(453)).containsExactlyInAnyOrder(448, 447, 452, 802)
     }
 }
