@@ -2,8 +2,7 @@ package io.github.zlooo.performance.tester.fixyou;
 
 import io.github.zlooo.fixyou.commons.pool.ObjectPool;
 import io.github.zlooo.fixyou.netty.AbstractNettyAwareFixMessageListener;
-import io.github.zlooo.fixyou.parser.model.Field;
-import io.github.zlooo.fixyou.parser.model.FixMessage;
+import io.github.zlooo.fixyou.parser.model.FixMessage2;
 import io.github.zlooo.fixyou.session.SessionID;
 import io.github.zlooo.performance.tester.fix.FixConstants;
 import io.github.zlooo.performance.tester.fix.FixMessages;
@@ -17,19 +16,18 @@ public class NewOrderSingleReceivingMessageListener extends AbstractNettyAwareFi
     private final char[] execID = new char[]{'0', '0', '0', '0', '0'};
     private final char[] orderID = new char[]{'0', '0', '0', '0', '0'};
     @Setter
-    private ObjectPool<FixMessage> fixMessageObjectPool;
+    private ObjectPool<FixMessage2> fixMessageObjectPool;
 
     @Override
-    public void onFixMessage(SessionID sessionID, FixMessage fixMessage) {
-        final Field clordIdField = fixMessage.getField(FixConstants.CLORD_ID_FIELD_NUMBER);
-        clordIdField.getCharSequenceValue(); //just to trigger parsing
-        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().writeAndFlush(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+    public void onFixMessage(SessionID sessionID, FixMessage2 fixMessage) {
+        final CharSequence clordId = fixMessage.getCharSequenceValue(FixConstants.CLORD_ID_FIELD_NUMBER);
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().writeAndFlush(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
-    private FixMessage getFixMessageFromPool() {
-        FixMessage fixMessage;
+    private FixMessage2 getFixMessageFromPool() {
+        FixMessage2 fixMessage;
         while ((fixMessage = fixMessageObjectPool.tryGetAndRetain()) == null) {
             Thread.yield();
         }

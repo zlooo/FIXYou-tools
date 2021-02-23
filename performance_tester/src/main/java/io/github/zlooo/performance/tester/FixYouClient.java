@@ -49,7 +49,7 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final String beginString = (String) config.get("beginString");
         final String senderCompId = (String) config.get("senderCompId");
         final String targetCompId = (String) config.get("targetCompId");
-        return new SessionID(beginString.toCharArray(), beginString.length(), senderCompId.toCharArray(), senderCompId.length(), targetCompId.toCharArray(), targetCompId.length());
+        return new SessionID(beginString, senderCompId, targetCompId);
     }
 
     @Override
