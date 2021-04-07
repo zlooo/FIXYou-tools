@@ -1,6 +1,7 @@
 package io.github.zlooo.spec.generator.xml
 
-
+import io.github.zlooo.fixyou.model.FieldType
+import io.github.zlooo.fixyou.model.FixSpec
 import io.github.zlooo.spec.generator.xml.model.FixType
 import io.github.zlooo.spec.generator.xml.model.XMLModelTest
 import org.assertj.core.api.Assertions
@@ -25,10 +26,12 @@ class DictionaryFileProcessorTest extends Specification {
         //NoRelatedSym group contains this component so it should contain it's fields
         result.getRepeatingGroups().containsKey(146)
         Assertions.
-                assertThat(result.getRepeatingGroups().get(146)).contains(668, 869, 870)
+                assertThat(result.getRepeatingGroups().get(146)).contains(new FixSpec.FieldNumberType(668, FieldType.LONG), new FixSpec.FieldNumberType(869, FieldType.DOUBLE), new FixSpec.FieldNumberType(870, FieldType.GROUP))
         //Parties component - component that has repeating group in it, also repeating group inside repeating group
         result.getRepeatingGroups().containsKey(453)
         Assertions.
-                assertThat(result.getRepeatingGroups().get(453)).containsExactlyInAnyOrder(448, 447, 452, 802)
+                assertThat(result.getRepeatingGroups().get(453)).
+                containsExactlyInAnyOrder(new FixSpec.FieldNumberType(448, FieldType.CHAR_ARRAY), new FixSpec.FieldNumberType(447, FieldType.CHAR), new FixSpec.FieldNumberType(452, FieldType.LONG),
+                                          new FixSpec.FieldNumberType(802, FieldType.GROUP))
     }
 }

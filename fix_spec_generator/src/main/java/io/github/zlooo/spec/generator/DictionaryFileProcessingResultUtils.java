@@ -1,6 +1,7 @@
 package io.github.zlooo.spec.generator;
 
 import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +29,7 @@ class DictionaryFileProcessingResultUtils {
         if (processingResult.getApplicationVersionID() == null) {
             throw new FixSpecGeneratorException("Application version id must be set");
         }
-        for (final Map.Entry<Integer, int[]> entry : processingResult.getRepeatingGroups().entrySet()) {
+        for (final Map.Entry<Integer, FixSpec.FieldNumberType[]> entry : processingResult.getRepeatingGroups().entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null || entry.getValue().length < 1) {
                 throw new FixSpecGeneratorException("Repeating group definitions cannot contain null key or value. Also value's length must be greater than 0, entry inspected " + entry.getKey() + "=" + Arrays.toString(entry.getValue()));
             }
@@ -50,19 +51,19 @@ class DictionaryFileProcessingResultUtils {
             if (result1.getApplicationVersionID() != result2.getApplicationVersionID()) {
                 throw new FixSpecGeneratorException("Different application version ids defined in multiple files! Versions received " + result1.getApplicationVersionID() + " and " + result2.getApplicationVersionID());
             }
-            final Map<Integer, int[]> repeatingGroups = result1.getRepeatingGroups();
-            for (final Map.Entry<Integer, int[]> entry : result2.getRepeatingGroups().entrySet()) {
-                final int[] repeatingGroupFieldNumbers = repeatingGroups.get(entry.getKey());
-                if (repeatingGroupFieldNumbers == null) {
+            final Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups = result1.getRepeatingGroups();
+            for (final Map.Entry<Integer, FixSpec.FieldNumberType[]> entry : result2.getRepeatingGroups().entrySet()) {
+                final FixSpec.FieldNumberType[] repeatingGroupFieldNumberTypes = repeatingGroups.get(entry.getKey());
+                if (repeatingGroupFieldNumberTypes == null) {
                     repeatingGroups.put(entry.getKey(), entry.getValue());
-                } else if (!Arrays.equals(repeatingGroupFieldNumbers, entry.getValue())) {
+                } else if (!Arrays.equals(repeatingGroupFieldNumberTypes, entry.getValue())) {
                     log.warn("The same repeating group defined in multiple files but they contain different fields, they will be merged. Group number {}, definition 1 {}, definition 2 {}", entry.getKey(),
-                             Arrays.toString(repeatingGroupFieldNumbers),
+                             Arrays.toString(repeatingGroupFieldNumberTypes),
                              Arrays.toString(entry.getValue()));
-                    final List<Integer> mergeResult = new ArrayList<>(); //List not set because we want to preserve order
-                    Arrays.stream(entry.getValue()).forEach(mergeResult::add);
-                    Arrays.stream(repeatingGroupFieldNumbers).forEach(mergeResult::add);
-                    repeatingGroups.put(entry.getKey(), mergeResult.stream().distinct().mapToInt(Integer::intValue).toArray());
+                    final List<FixSpec.FieldNumberType> mergeResult = new ArrayList<>(); //List not set because we want to preserve order
+                    mergeResult.addAll(Arrays.asList(entry.getValue()));
+                    mergeResult.addAll(Arrays.asList(repeatingGroupFieldNumberTypes));
+                    repeatingGroups.put(entry.getKey(), mergeResult.stream().distinct().toArray(FixSpec.FieldNumberType[]::new));
                 }
             }
             return result1;

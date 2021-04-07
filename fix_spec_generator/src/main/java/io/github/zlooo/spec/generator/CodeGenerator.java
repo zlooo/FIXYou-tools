@@ -24,23 +24,34 @@ class CodeGenerator {
     JavaFile generateFixSpecSourceCode(DictionaryFileProcessor.Result procssingResult, String packageName) {
         final Map<Integer, FieldType> fieldNumberToType = procssingResult.getFieldNumbersToTypes();
         final Integer[] fieldNumbers = new Integer[fieldNumberToType.size()];
+        final FieldType[] fieldTypes = new FieldType[fieldNumberToType.size()];
         final Iterator<Map.Entry<Integer, FieldType>> fieldNumberToTypeIterator = fieldNumberToType.entrySet().iterator();
         for (int i = 0; fieldNumberToTypeIterator.hasNext(); i++) {
             final Map.Entry<Integer, FieldType> entry = fieldNumberToTypeIterator.next();
             fieldNumbers[i] = entry.getKey();
+            fieldTypes[i]=entry.getValue();
         }
-        return JavaFile.builder(packageName, TypeSpec.classBuilder("FixSpec").addField(repeatingGroupField())
+        return JavaFile.builder(packageName, TypeSpec.classBuilder("FixSpec")
+                                                     .addField(emptyFieldNumberTypeArrayField())
+                                                     .addField(repeatingGroupField())
                                                      .addField(fieldsOrderField(fieldNumbers))
+                                                     .addField(fieldsTypeField(fieldTypes))
                                                      .addField(messageTypesField(procssingResult.getMessageTypes()))
                                                      .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                                                      .addSuperinterface(FixSpec.class)
                                                      .addMethod(createRepeatingGroupsMethod(procssingResult.getRepeatingGroups()))
                                                      .addMethod(getFieldsOrderMethod())
+                                                     .addMethod(getFieldTypesMethod())
                                                      .addMethod(getMessageTypesMethod())
-                                                     .addMethod(getHighestFieldNumberMethod(fieldNumbers))
                                                      .addMethod(getApplicationVersionIdMethod(procssingResult.getApplicationVersionID()))
                                                      .addMethod(getRepeatingGroupFieldNumbersMethod())
                                                      .build()).build();
+    }
+
+    private FieldSpec emptyFieldNumberTypeArrayField() {
+        return FieldSpec.builder(FixSpec.FieldNumberType[].class, "EMPTY_FIELD_NUMBER_TYPE_ARRAY", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                        .initializer("new $T[0]", FixSpec.FieldNumberType.class)
+                        .build();
     }
 
     private FieldSpec messageTypesField(Set<String> messageTypes) {
@@ -72,27 +83,41 @@ class CodeGenerator {
                         .build();
     }
 
-    private static MethodSpec createRepeatingGroupsMethod(Map<Integer, int[]> repeatingGroups) {
+    private FieldSpec fieldsTypeField(FieldType[] fieldNumbers) {
+        final StringBuilder initializer = new StringBuilder("new $T[]{");
+        for (int i = 0; i < fieldNumbers.length; i++) {
+            initializer.append("FieldType.").append(fieldNumbers[i]);
+            if (i < fieldNumbers.length - 1) {
+                initializer.append(ARRAY_ELEMENT_SEPARATOR);
+            }
+        }
+        initializer.append(ARRAY_ENDING);
+        return FieldSpec.builder(FieldType[].class, "FIELD_TYPES", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+                        .initializer(initializer.toString(), FieldType.class)
+                        .build();
+    }
+
+    private static MethodSpec createRepeatingGroupsMethod(Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups) {
         final MethodSpec.Builder methodSpecBuilder = MethodSpec.methodBuilder("createRepeatingGroups")
                                                                .addModifiers(Modifier.PRIVATE, Modifier.STATIC)
-                                                               .returns(ParameterizedTypeName.get(Map.class, Integer.class, int[].class))
-                                                               .addStatement("final $T<$T, int[]> result = new $T<>($L)", Map.class, Integer.class, HashMap.class, repeatingGroups.size());
-        for (final Map.Entry<Integer, int[]> entry : repeatingGroups.entrySet()) {
-            final int[] values = entry.getValue();
-            final StringBuilder singleGroupStatementBuilder = new StringBuilder("result.put($L, new int[]{");
+                                                               .returns(ParameterizedTypeName.get(Map.class, Integer.class, FixSpec.FieldNumberType[].class))
+                                                               .addStatement("final $T<$T, $T[]> result = new $T<>($L)", Map.class, Integer.class, FixSpec.FieldNumberType.class, HashMap.class, repeatingGroups.size());
+        for (final Map.Entry<Integer, FixSpec.FieldNumberType[]> entry : repeatingGroups.entrySet()) {
+            final FixSpec.FieldNumberType[] values = entry.getValue();
+            final StringBuilder singleGroupStatementBuilder = new StringBuilder("result.put($L, new $T[]{");
             for (int i = 0; i < values.length; i++) {
-                singleGroupStatementBuilder.append(values[i]);
+                singleGroupStatementBuilder.append(CodeBlock.of("new $T($L, $T.$L)", FixSpec.FieldNumberType.class, values[i].getNumber(), FieldType.class, values[i].getType()).toString());
                 if (i < values.length - 1) {
                     singleGroupStatementBuilder.append(ARRAY_ELEMENT_SEPARATOR);
                 }
             }
-            methodSpecBuilder.addStatement(singleGroupStatementBuilder.append("})").toString(), entry.getKey());
+            methodSpecBuilder.addStatement(singleGroupStatementBuilder.append("})").toString(), entry.getKey(), FixSpec.FieldNumberType.class);
         }
         return methodSpecBuilder.addStatement("return result").build();
     }
 
     private static FieldSpec repeatingGroupField() {
-        return FieldSpec.builder(ParameterizedTypeName.get(Map.class, Integer.class, int[].class), "REPEATING_GROUPS", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+        return FieldSpec.builder(ParameterizedTypeName.get(Map.class, Integer.class, FixSpec.FieldNumberType[].class), "REPEATING_GROUPS", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                         .initializer("createRepeatingGroups()")
                         .build();
     }
@@ -102,8 +127,8 @@ class CodeGenerator {
                          .addModifiers(Modifier.PUBLIC)
                          .addAnnotation(Override.class)
                          .addParameter(int.class, "groupNumber")
-                         .returns(int[].class)
-                         .addStatement("return REPEATING_GROUPS.getOrDefault(groupNumber, $T.EMPTY_INT_ARRAY)", ArrayUtils.class)
+                         .returns(FixSpec.FieldNumberType[].class)
+                         .addStatement("return REPEATING_GROUPS.getOrDefault(groupNumber, EMPTY_FIELD_NUMBER_TYPE_ARRAY)")
                          .build();
     }
 
@@ -114,11 +139,6 @@ class CodeGenerator {
                          .returns(ApplicationVersionID.class)
                          .addStatement("return $T.$L", ApplicationVersionID.class, applicationVersionID)
                          .build();
-    }
-
-    private static MethodSpec getHighestFieldNumberMethod(Integer[] fieldNumbers) {
-        final int highestFieldNumber = Stream.of(fieldNumbers).mapToInt(Integer::intValue).max().orElseThrow(() -> new FixSpecGeneratorException("Empty stream, seriously? Get your shit together!!!!"));
-        return MethodSpec.methodBuilder("highestFieldNumber").addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int.class).addStatement("return " + highestFieldNumber).build();
     }
 
     private static MethodSpec getMessageTypesMethod() {
@@ -139,5 +159,9 @@ class CodeGenerator {
 
     private static MethodSpec getFieldsOrderMethod() {
         return MethodSpec.methodBuilder("getFieldsOrder").addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int[].class).addStatement("return FIELDS_ORDER").build();
+    }
+
+    private static MethodSpec getFieldTypesMethod() {
+        return MethodSpec.methodBuilder("getFieldTypes").addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(FieldType[].class).addStatement("return FIELD_TYPES").build();
     }
 }
