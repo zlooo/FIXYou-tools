@@ -2,6 +2,7 @@ package io.github.zlooo.spec.generator.xml;
 
 import io.github.zlooo.fixyou.model.ApplicationVersionID;
 import io.github.zlooo.fixyou.model.FieldType;
+import io.github.zlooo.fixyou.model.FixSpec;
 import io.github.zlooo.spec.generator.xml.model.ComponentType;
 import io.github.zlooo.spec.generator.xml.model.FixType;
 import io.github.zlooo.spec.generator.xml.model.GroupType;
@@ -39,7 +40,7 @@ public class DictionaryFileProcessor {
         setFieldNumberToTypesMapEntries(fields, fieldNumbersToTypes, nameToField);
 
         resolveComponents(nameToComponent);
-        final Map<Integer, int[]> repeatingGroups = new HashMap<>(nameToGroup.size());
+        final Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups = new HashMap<>(nameToGroup.size());
         for (final Map.Entry<String, GroupType> entry : nameToGroup.entrySet()) {
             final GroupType group = entry.getValue();
             repeatingGroups.put(nameToField.get(group.getName()).getNumber(), buildFieldNumbers(group, nameToField, nameToComponent));
@@ -102,16 +103,16 @@ public class DictionaryFileProcessor {
         resolvedComponentNames.add(component.getName());
     }
 
-    private static int[] buildFieldNumbers(GroupType groupToProcess, Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField,
-                                           Map<String, ComponentType> nameToComponent) {
-        final List<Integer> result = new ArrayList<>();
+    private static FixSpec.FieldNumberType[] buildFieldNumbers(GroupType groupToProcess, Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField,
+                                                               Map<String, ComponentType> nameToComponent) {
+        final List<FixSpec.FieldNumberType> result = new ArrayList<>();
         for (final ComponentType component : groupToProcess.getComponent()) {
             final ComponentType lookedUpComponent = nameToComponent.get(component.getName());
-            lookedUpComponent.getField().stream().map(field -> nameToField.get(field.getName())).map(io.github.zlooo.spec.generator.xml.model.FieldType::getNumber).forEach(result::add);
-            lookedUpComponent.getGroup().stream().map(group -> nameToField.get(group.getName()).getNumber()).forEach(result::add);
+            lookedUpComponent.getField().stream().map(field -> nameToField.get(field.getName())).map(xmlModel -> new FixSpec.FieldNumberType(xmlModel.getNumber(), FIELD_TYPES.get(xmlModel.getType()))).forEach(result::add);
+            lookedUpComponent.getGroup().stream().map(group -> nameToField.get(group.getName())).map(xmlModel -> new FixSpec.FieldNumberType(xmlModel.getNumber(), FIELD_TYPES.get(xmlModel.getType()))).forEach(result::add);
         }
-        groupToProcess.getField().stream().map(field -> nameToField.get(field.getName())).map(io.github.zlooo.spec.generator.xml.model.FieldType::getNumber).forEach(result::add);
-        return result.stream().mapToInt(Integer::intValue).toArray();
+        groupToProcess.getField().stream().map(field -> nameToField.get(field.getName())).map(xmlModel -> new FixSpec.FieldNumberType(xmlModel.getNumber(), FIELD_TYPES.get(xmlModel.getType()))).forEach(result::add);
+        return result.toArray(new FixSpec.FieldNumberType[0]);
     }
 
     private static Map<String, FieldType> createFieldTypeMapping() {
@@ -164,6 +165,6 @@ public class DictionaryFileProcessor {
         private Set<String> messageTypes;
         private Map<Integer, FieldType> fieldNumbersToTypes;
         private ApplicationVersionID applicationVersionID;
-        private Map<Integer, int[]> repeatingGroups;
+        private Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups;
     }
 }
