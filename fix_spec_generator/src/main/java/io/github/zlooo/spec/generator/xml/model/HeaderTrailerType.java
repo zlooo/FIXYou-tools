@@ -12,27 +12,24 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>Java class for messageType complex type.
+ * <p>Java class for headerTrailerType complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="messageType">
+ * &lt;complexType name="headerTrailerType">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="component" type="{}componentType" maxOccurs="unbounded"/>
  *         &lt;element name="field" type="{}fieldType" maxOccurs="unbounded"/>
+ *         &lt;element name="group" type="{}groupType" maxOccurs="unbounded"/>
  *       &lt;/sequence>
- *       &lt;attribute name="name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="msgtype" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="msgcat" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,22 +38,19 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "messageType", propOrder = {
+@XmlType(name = "headerTrailerType", propOrder = {
     "component",
-    "field"
+    "field",
+    "group"
 })
-public class MessageType {
+public class HeaderTrailerType {
 
     @XmlElement(required = true)
     protected List<ComponentType> component;
     @XmlElement(required = true)
     protected List<FieldType> field;
-    @XmlAttribute(name = "name", required = true)
-    protected String name;
-    @XmlAttribute(name = "msgtype", required = true)
-    protected String msgtype;
-    @XmlAttribute(name = "msgcat")
-    protected String msgcat;
+    @XmlElement(required = true)
+    protected List<GroupType> group;
 
     /**
      * Gets the value of the component property.
@@ -117,75 +111,32 @@ public class MessageType {
     }
 
     /**
-     * Gets the value of the name property.
+     * Gets the value of the group property.
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Sets the value of the name property.
+     * <p>
+     * This accessor method returns a reference to the live list,
+     * not a snapshot. Therefore any modification you make to the
+     * returned list will be present inside the JAXB object.
+     * This is why there is not a <CODE>set</CODE> method for the group property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setName(String value) {
-        this.name = value;
-    }
-
-    /**
-     * Gets the value of the msgtype property.
+     * <p>
+     * For example, to add a new item, do as follows:
+     * <pre>
+     *    getGroup().add(newItem);
+     * </pre>
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getMsgtype() {
-        return msgtype;
-    }
-
-    /**
-     * Sets the value of the msgtype property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setMsgtype(String value) {
-        this.msgtype = value;
-    }
-
-    /**
-     * Gets the value of the msgcat property.
+     * <p>
+     * Objects of the following type(s) are allowed in the list
+     * {@link GroupType }
      * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getMsgcat() {
-        return msgcat;
-    }
-
-    /**
-     * Sets the value of the msgcat property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
      */
-    public void setMsgcat(String value) {
-        this.msgcat = value;
+    public List<GroupType> getGroup() {
+        if (group == null) {
+            group = new ArrayList<GroupType>();
+        }
+        return this.group;
     }
 
 }

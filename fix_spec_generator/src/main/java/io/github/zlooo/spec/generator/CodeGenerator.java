@@ -4,15 +4,10 @@ import com.squareup.javapoet.*;
 import io.github.zlooo.fixyou.model.ApplicationVersionID;
 import io.github.zlooo.fixyou.model.FieldType;
 import io.github.zlooo.fixyou.model.FixSpec;
-import io.github.zlooo.fixyou.utils.ArrayUtils;
 import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 
 import javax.lang.model.element.Modifier;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Stream;
+import java.util.*;
 
 class CodeGenerator {
 
@@ -22,30 +17,48 @@ class CodeGenerator {
     private static final char BACKSLASH = '\'';
 
     JavaFile generateFixSpecSourceCode(DictionaryFileProcessor.Result procssingResult, String packageName) {
-        final Map<Integer, FieldType> fieldNumberToType = procssingResult.getFieldNumbersToTypes();
-        final Integer[] fieldNumbers = new Integer[fieldNumberToType.size()];
-        final FieldType[] fieldTypes = new FieldType[fieldNumberToType.size()];
-        final Iterator<Map.Entry<Integer, FieldType>> fieldNumberToTypeIterator = fieldNumberToType.entrySet().iterator();
-        for (int i = 0; fieldNumberToTypeIterator.hasNext(); i++) {
-            final Map.Entry<Integer, FieldType> entry = fieldNumberToTypeIterator.next();
-            fieldNumbers[i] = entry.getKey();
-            fieldTypes[i]=entry.getValue();
-        }
+        final LinkedHashMap<Integer, FieldType> bodyFieldNumberToType = procssingResult.getBodyFieldsNumbersToTypes();
+        final Integer[] bodyFieldNumbers = new Integer[bodyFieldNumberToType.size()];
+        final FieldType[] bodyFieldTypes = new FieldType[bodyFieldNumberToType.size()];
+        fillFieldNumbersAndTypes(bodyFieldNumberToType, bodyFieldNumbers, bodyFieldTypes);
+
+        final LinkedHashMap<Integer, FieldType> headerFieldNumberToType = procssingResult.getHeaderFieldsNumberToTypes();
+        final Integer[] headerFieldNumbers = new Integer[headerFieldNumberToType.size()];
+        final FieldType[] headerFieldTypes = new FieldType[headerFieldNumberToType.size()];
+        fillFieldNumbersAndTypes(headerFieldNumberToType, headerFieldNumbers, headerFieldTypes);
+
+        final FieldSpec headerFieldsOrderStaticField = fieldsOrderField(headerFieldNumbers, "HEADER_FIELDS_ORDER");
+        final FieldSpec headerFieldTypesStaticField = fieldsTypeField(headerFieldTypes, "HEADER_FIELD_TYPES");
+        final FieldSpec bodyFieldsOrderStaticField = fieldsOrderField(bodyFieldNumbers, "BODY_FIELDS_ORDER");
+        final FieldSpec bodyFieldTypesStaticField = fieldsTypeField(bodyFieldTypes, "BODY_FIELD_TYPES");
         return JavaFile.builder(packageName, TypeSpec.classBuilder("FixSpec")
                                                      .addField(emptyFieldNumberTypeArrayField())
                                                      .addField(repeatingGroupField())
-                                                     .addField(fieldsOrderField(fieldNumbers))
-                                                     .addField(fieldsTypeField(fieldTypes))
+                                                     .addField(headerFieldsOrderStaticField)
+                                                     .addField(headerFieldTypesStaticField)
+                                                     .addField(bodyFieldsOrderStaticField)
+                                                     .addField(bodyFieldTypesStaticField)
                                                      .addField(messageTypesField(procssingResult.getMessageTypes()))
                                                      .addModifiers(Modifier.PUBLIC, Modifier.FINAL)
                                                      .addSuperinterface(FixSpec.class)
                                                      .addMethod(createRepeatingGroupsMethod(procssingResult.getRepeatingGroups()))
-                                                     .addMethod(getFieldsOrderMethod())
-                                                     .addMethod(getFieldTypesMethod())
+                                                     .addMethod(getFieldsOrderMethod("getHeaderFieldsOrder", headerFieldsOrderStaticField.name))
+                                                     .addMethod(getFieldsOrderMethod("getBodyFieldsOrder", bodyFieldsOrderStaticField.name))
+                                                     .addMethod(getFieldTypesMethod("getHeaderFieldTypes", headerFieldTypesStaticField.name))
+                                                     .addMethod(getFieldTypesMethod("getBodyFieldTypes", bodyFieldTypesStaticField.name))
                                                      .addMethod(getMessageTypesMethod())
                                                      .addMethod(getApplicationVersionIdMethod(procssingResult.getApplicationVersionID()))
                                                      .addMethod(getRepeatingGroupFieldNumbersMethod())
                                                      .build()).build();
+    }
+
+    private void fillFieldNumbersAndTypes(LinkedHashMap<Integer, FieldType> fieldNumberToType, Integer[] fieldNumbers, FieldType[] fieldTypes) {
+        final Iterator<Map.Entry<Integer, FieldType>> fieldNumberToTypeIterator = fieldNumberToType.entrySet().iterator();
+        for (int i = 0; fieldNumberToTypeIterator.hasNext(); i++) {
+            final Map.Entry<Integer, FieldType> entry = fieldNumberToTypeIterator.next();
+            fieldNumbers[i] = entry.getKey();
+            fieldTypes[i] = entry.getValue();
+        }
     }
 
     private FieldSpec emptyFieldNumberTypeArrayField() {
@@ -69,7 +82,7 @@ class CodeGenerator {
                         .build();
     }
 
-    private FieldSpec fieldsOrderField(Integer[] fieldNumbers) {
+    private FieldSpec fieldsOrderField(Integer[] fieldNumbers, String fieldName) {
         final StringBuilder initializer = new StringBuilder("new int[]{");
         for (int i = 0; i < fieldNumbers.length; i++) {
             initializer.append(fieldNumbers[i]);
@@ -78,12 +91,12 @@ class CodeGenerator {
             }
         }
         initializer.append(ARRAY_ENDING);
-        return FieldSpec.builder(int[].class, "FIELDS_ORDER", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+        return FieldSpec.builder(int[].class, fieldName, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                         .initializer(initializer.toString())
                         .build();
     }
 
-    private FieldSpec fieldsTypeField(FieldType[] fieldNumbers) {
+    private FieldSpec fieldsTypeField(FieldType[] fieldNumbers, String fieldName) {
         final StringBuilder initializer = new StringBuilder("new $T[]{");
         for (int i = 0; i < fieldNumbers.length; i++) {
             initializer.append("FieldType.").append(fieldNumbers[i]);
@@ -92,7 +105,7 @@ class CodeGenerator {
             }
         }
         initializer.append(ARRAY_ENDING);
-        return FieldSpec.builder(FieldType[].class, "FIELD_TYPES", Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
+        return FieldSpec.builder(FieldType[].class, fieldName, Modifier.PRIVATE, Modifier.STATIC, Modifier.FINAL)
                         .initializer(initializer.toString(), FieldType.class)
                         .build();
     }
@@ -157,11 +170,11 @@ class CodeGenerator {
         return charArray.append('}').toString();
     }
 
-    private static MethodSpec getFieldsOrderMethod() {
-        return MethodSpec.methodBuilder("getFieldsOrder").addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int[].class).addStatement("return FIELDS_ORDER").build();
+    private static MethodSpec getFieldsOrderMethod(String methodName, String fieldName) {
+        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int[].class).addStatement("return " + fieldName).build();
     }
 
-    private static MethodSpec getFieldTypesMethod() {
-        return MethodSpec.methodBuilder("getFieldTypes").addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(FieldType[].class).addStatement("return FIELD_TYPES").build();
+    private static MethodSpec getFieldTypesMethod(String methodName, String fieldName) {
+        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(FieldType[].class).addStatement("return " + fieldName).build();
     }
 }

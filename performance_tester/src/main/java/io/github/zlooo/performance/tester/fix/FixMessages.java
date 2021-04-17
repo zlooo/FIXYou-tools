@@ -1,6 +1,6 @@
 package io.github.zlooo.performance.tester.fix;
 
-import io.github.zlooo.fixyou.parser.model.FixMessage2;
+import io.github.zlooo.fixyou.parser.model.FixMessage;
 import lombok.experimental.UtilityClass;
 import quickfix.Message;
 import quickfix.SessionID;
@@ -57,7 +57,7 @@ public class FixMessages {
         return executionReport.toString();
     }
 
-    public static FixMessage2 toExecutionReport(FixMessage2 fixMessage, CharSequence clordId, char[] executionId, char execType, char orderStatus, char[] orderId) {
+    public static FixMessage toExecutionReport(FixMessage fixMessage, CharSequence clordId, char[] executionId, char execType, char orderStatus, char[] orderId) {
         fixMessage.reset();
         fixMessage.setCharSequenceValue(FixConstants.CLORD_ID_FIELD_NUMBER, clordId);
         fixMessage.setCharSequenceValue(io.github.zlooo.fixyou.FixConstants.MESSAGE_TYPE_FIELD_NUMBER, io.github.zlooo.performance.tester.fix.FixConstants.EXECUTION_REPORT);
