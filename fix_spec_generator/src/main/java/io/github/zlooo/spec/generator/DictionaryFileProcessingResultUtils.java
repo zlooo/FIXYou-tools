@@ -6,10 +6,7 @@ import io.github.zlooo.spec.generator.xml.DictionaryFileProcessor;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BinaryOperator;
 
 @Slf4j
@@ -20,20 +17,21 @@ class DictionaryFileProcessingResultUtils {
         if (processingResult.getMessageTypes().contains(null)) {
             throw new FixSpecGeneratorException("Message types cannot contain null values");
         }
-        for (final Map.Entry<Integer, FieldType> entry : processingResult.getHeaderFieldsNumberToTypes().entrySet()) {
-            if (entry.getKey() == null || entry.getValue() == null) {
-                throw new FixSpecGeneratorException("Header field number to types map cannot contain null key or value, entry inspected " + entry);
-            }
-        }
-        for (final Map.Entry<Integer, FieldType> entry : processingResult.getBodyFieldsNumbersToTypes().entrySet()) {
-            if (entry.getKey() == null || entry.getValue() == null) {
-                throw new FixSpecGeneratorException("Body field number to types map cannot contain null key or value, entry inspected " + entry);
-            }
-        }
+        validateFieldNumberTypes("Header", processingResult.getHeaderFieldsNumberToTypes());
+        validateFieldNumberTypes("Body", processingResult.getBodyFieldsNumbersToTypes());
+        Objects.requireNonNull(processingResult.getApplicationVersionID(), "Application version id must be set");
+        validateRepeatingGroups(processingResult);
+    }
 
-        if (processingResult.getApplicationVersionID() == null) {
-            throw new FixSpecGeneratorException("Application version id must be set");
+    private static void validateFieldNumberTypes(String fieldNumbersType, LinkedHashMap<Integer, FieldType> fieldsNumbersToTypes) {
+        for (final Map.Entry<Integer, FieldType> entry : fieldsNumbersToTypes.entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                throw new FixSpecGeneratorException(fieldNumbersType + " field number to types map cannot contain null key or value, entry inspected " + entry);
+            }
         }
+    }
+
+    private static void validateRepeatingGroups(DictionaryFileProcessor.Result processingResult) {
         for (final Map.Entry<Integer, FixSpec.FieldNumberType[]> entry : processingResult.getRepeatingGroups().entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null || entry.getValue().length < 1) {
                 throw new FixSpecGeneratorException("Repeating group definitions cannot contain null key or value. Also value's length must be greater than 0, entry inspected " + entry.getKey() + "=" + Arrays.toString(entry.getValue()));

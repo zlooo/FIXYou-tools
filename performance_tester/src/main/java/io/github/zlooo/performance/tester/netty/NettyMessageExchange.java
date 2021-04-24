@@ -2,6 +2,7 @@ package io.github.zlooo.performance.tester.netty;
 
 import com.github.benmanes.caffeine.SingleConsumerQueue;
 import io.github.zlooo.performance.tester.MessageExchange;
+import io.github.zlooo.performance.tester.PerformanceTesterException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,6 +40,9 @@ public class NettyMessageExchange implements MessageExchange<String> {
     @Nullable
     @Override
     public String getSingleMessage() {
+        if (!channel.isActive() && receivedMessages.isEmpty()) {
+            throw new PerformanceTesterException("Channel is inactive! How am I supposed to receive message when channel is not active?");
+        }
         return receivedMessages.poll();
     }
 

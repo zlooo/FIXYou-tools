@@ -6,6 +6,7 @@ import io.github.zlooo.performance.tester.fix.FixMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
+import org.slf4j.Logger;
 import quickfix.SessionID;
 import quickfix.field.ExecType;
 import quickfix.field.OrdStatus;
@@ -51,7 +52,7 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
     }
 
     @Override
-    public void logSumup() {
-        log.info("Sent {} execution reports, ", timesExecuted * EXECUTION_REPORTS_PER_NEW_ORDER_SINGLE);
+    public void logSumup(Logger logger) {
+        logger.info("Sent {} execution reports, ", timesExecuted * EXECUTION_REPORTS_PER_NEW_ORDER_SINGLE);
     }
 }

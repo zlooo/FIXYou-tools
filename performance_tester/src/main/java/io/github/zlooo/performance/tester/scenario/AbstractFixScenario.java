@@ -31,5 +31,13 @@ public abstract class AbstractFixScenario implements TestScenario {
 
     @Override
     public void after() {
+        fixMessageExchange.sendMessage(FixMessages.logout(sessionID, sequenceNumber++, null));
+        fixMessageExchange.endOfBatch();
+        while (true) {
+            final String logoutResponse = fixMessageExchange.getSingleMessage();
+            if (logoutResponse != null && logoutResponse.contains("35=5")) {
+                break;
+            }
+        }
     }
 }

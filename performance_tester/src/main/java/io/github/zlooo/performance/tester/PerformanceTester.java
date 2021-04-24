@@ -15,7 +15,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@CommandLine.Command(name = "performance_tester", mixinStandardHelpOptions = true, version = "1.0.0", subcommands = {NettyProbe.class, FixYouClient.class, QuickfixClient.class})
+@CommandLine.Command(name = "performance_tester", mixinStandardHelpOptions = true, version = "1.0.0", subcommands = {NettyProbe.class, FixYouClient.class, QuickfixClient.class, FixioClient.class})
 public class PerformanceTester implements Callable<Integer> {
 
     private static final String DEFAULT_CONFIG_FILE_NAME = "/defaults.yaml";
