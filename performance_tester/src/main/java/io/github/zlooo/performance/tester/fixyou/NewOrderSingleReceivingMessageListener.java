@@ -2,7 +2,6 @@ package io.github.zlooo.performance.tester.fixyou;
 
 import io.github.zlooo.fixyou.commons.pool.ObjectPool;
 import io.github.zlooo.fixyou.netty.AbstractNettyAwareFixMessageListener;
-import io.github.zlooo.fixyou.parser.model.Field;
 import io.github.zlooo.fixyou.parser.model.FixMessage;
 import io.github.zlooo.fixyou.session.SessionID;
 import io.github.zlooo.performance.tester.fix.FixConstants;
@@ -21,11 +20,10 @@ public class NewOrderSingleReceivingMessageListener extends AbstractNettyAwareFi
 
     @Override
     public void onFixMessage(SessionID sessionID, FixMessage fixMessage) {
-        final Field clordIdField = fixMessage.getField(FixConstants.CLORD_ID_FIELD_NUMBER);
-        clordIdField.getCharSequenceValue(); //just to trigger parsing
-        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
-        getChannel().writeAndFlush(FixMessages.toExecutionReport(getFixMessageFromPool(), clordIdField, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        final CharSequence clordId = fixMessage.getCharSequenceValue(FixConstants.CLORD_ID_FIELD_NUMBER);
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), 'A', 'A', increment(orderID))).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().write(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), '0', '0', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
+        getChannel().writeAndFlush(FixMessages.toExecutionReport(getFixMessageFromPool(), clordId, increment(execID), '2', '2', orderID)).addListener(ChannelFutureListener.FIRE_EXCEPTION_ON_FAILURE);
     }
 
     private FixMessage getFixMessageFromPool() {

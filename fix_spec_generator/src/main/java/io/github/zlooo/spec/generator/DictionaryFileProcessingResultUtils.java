@@ -20,9 +20,14 @@ class DictionaryFileProcessingResultUtils {
         if (processingResult.getMessageTypes().contains(null)) {
             throw new FixSpecGeneratorException("Message types cannot contain null values");
         }
-        for (final Map.Entry<Integer, FieldType> entry : processingResult.getFieldNumbersToTypes().entrySet()) {
+        for (final Map.Entry<Integer, FieldType> entry : processingResult.getHeaderFieldsNumberToTypes().entrySet()) {
             if (entry.getKey() == null || entry.getValue() == null) {
-                throw new FixSpecGeneratorException("Field number to types map cannot contain null key or value, entry inspected " + entry);
+                throw new FixSpecGeneratorException("Header field number to types map cannot contain null key or value, entry inspected " + entry);
+            }
+        }
+        for (final Map.Entry<Integer, FieldType> entry : processingResult.getBodyFieldsNumbersToTypes().entrySet()) {
+            if (entry.getKey() == null || entry.getValue() == null) {
+                throw new FixSpecGeneratorException("Body field number to types map cannot contain null key or value, entry inspected " + entry);
             }
         }
 
@@ -39,15 +44,9 @@ class DictionaryFileProcessingResultUtils {
     static BinaryOperator<DictionaryFileProcessor.Result> resultAccumulator() {
         return (result1, result2) -> {
             result1.getMessageTypes().addAll(result2.getMessageTypes());
-            final Map<Integer, FieldType> fieldNumberToType = result1.getFieldNumbersToTypes();
-            for (final Map.Entry<Integer, FieldType> entry : result2.getFieldNumbersToTypes().entrySet()) {
-                final FieldType fieldType = fieldNumberToType.get(entry.getKey());
-                if (fieldType != null && fieldType != entry.getValue()) {
-                    throw new FixSpecGeneratorException("Same field in multiple files defined but with different types? Field number " + entry.getKey() + ", types " + fieldType + ", " + entry.getValue());
-                } else {
-                    fieldNumberToType.put(entry.getKey(), entry.getValue());
-                }
-            }
+            mergeFieldNumberToTypeMap(result1.getHeaderFieldsNumberToTypes(), result2.getHeaderFieldsNumberToTypes());
+            mergeFieldNumberToTypeMap(result1.getBodyFieldsNumbersToTypes(), result2.getBodyFieldsNumbersToTypes());
+            result1.getHeaderFieldsNumberToTypes().forEach(result1.getBodyFieldsNumbersToTypes()::remove);
             if (result1.getApplicationVersionID() != result2.getApplicationVersionID()) {
                 throw new FixSpecGeneratorException("Different application version ids defined in multiple files! Versions received " + result1.getApplicationVersionID() + " and " + result2.getApplicationVersionID());
             }
@@ -68,5 +67,16 @@ class DictionaryFileProcessingResultUtils {
             }
             return result1;
         };
+    }
+
+    private static void mergeFieldNumberToTypeMap(Map<Integer, FieldType> destinationMap, Map<Integer, FieldType> sourceMap) {
+        for (final Map.Entry<Integer, FieldType> entry : sourceMap.entrySet()) {
+            final FieldType fieldType = destinationMap.get(entry.getKey());
+            if (fieldType != null && fieldType != entry.getValue()) {
+                throw new FixSpecGeneratorException("Same field in multiple files defined but with different types? Field number " + entry.getKey() + ", types " + fieldType + ", " + entry.getValue());
+            } else {
+                destinationMap.put(entry.getKey(), entry.getValue());
+            }
+        }
     }
 }

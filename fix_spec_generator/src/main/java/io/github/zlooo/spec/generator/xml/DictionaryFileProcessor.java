@@ -3,10 +3,7 @@ package io.github.zlooo.spec.generator.xml;
 import io.github.zlooo.fixyou.model.ApplicationVersionID;
 import io.github.zlooo.fixyou.model.FieldType;
 import io.github.zlooo.fixyou.model.FixSpec;
-import io.github.zlooo.spec.generator.xml.model.ComponentType;
-import io.github.zlooo.spec.generator.xml.model.FixType;
-import io.github.zlooo.spec.generator.xml.model.GroupType;
-import io.github.zlooo.spec.generator.xml.model.MessageType;
+import io.github.zlooo.spec.generator.xml.model.*;
 import lombok.Data;
 
 import java.util.*;
@@ -23,7 +20,6 @@ public class DictionaryFileProcessor {
         final Result result = new Result();
         result.setMessageTypes(objectToProcess.getMessages().getMessage().stream().map(MessageType::getMsgtype).collect(Collectors.toSet()));
         final List<io.github.zlooo.spec.generator.xml.model.FieldType> fields = objectToProcess.getFields().getField();
-        final Map<Integer, FieldType> fieldNumbersToTypes = new LinkedHashMap<>(fields.size());
         final Map<String, GroupType> nameToGroup = new HashMap<>();
         final Map<String, ComponentType> nameToComponent = new HashMap<>(objectToProcess.getComponents().getComponent().size());
         final Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField = new HashMap<>(fields.size());
@@ -36,34 +32,41 @@ public class DictionaryFileProcessor {
         for (final io.github.zlooo.spec.generator.xml.model.FieldType field : fields) {
             nameToField.put(field.getName(), field);
         }
-
-        setFieldNumberToTypesMapEntries(fields, fieldNumbersToTypes, nameToField);
-
+        final LinkedHashMap<Integer, FieldType> fieldNumbersToTypes = toNumberTypeMap(fields);
         resolveComponents(nameToComponent);
         final Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups = new HashMap<>(nameToGroup.size());
         for (final Map.Entry<String, GroupType> entry : nameToGroup.entrySet()) {
             final GroupType group = entry.getValue();
             repeatingGroups.put(nameToField.get(group.getName()).getNumber(), buildFieldNumbers(group, nameToField, nameToComponent));
         }
-        result.setFieldNumbersToTypes(fieldNumbersToTypes);
+        result.setHeaderFieldsNumberToTypes(buildHeaderFieldNumbersToTypes(objectToProcess.getHeader(), nameToField));
+        result.getHeaderFieldsNumberToTypes().forEach(fieldNumbersToTypes::remove);
+        result.setBodyFieldsNumbersToTypes(fieldNumbersToTypes);
         result.setApplicationVersionID(ApplicationVersionID.FIX50SP2);
         result.setRepeatingGroups(repeatingGroups);
         return result;
     }
 
-    //TODO use <header> and <trailer> tags instead to set up beginning and ending of list of fields
-    private void setFieldNumberToTypesMapEntries(List<io.github.zlooo.spec.generator.xml.model.FieldType> fields, Map<Integer, FieldType> fieldNumbersToTypes, Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField) {
-        final io.github.zlooo.spec.generator.xml.model.FieldType beginString = nameToField.get("BeginString");
-        fieldNumbersToTypes.put(beginString.getNumber(), FIELD_TYPES.get(beginString.getType()));
-        final io.github.zlooo.spec.generator.xml.model.FieldType bodyLength = nameToField.get("BodyLength");
-        fieldNumbersToTypes.put(bodyLength.getNumber(), FIELD_TYPES.get(bodyLength.getType()));
-        final io.github.zlooo.spec.generator.xml.model.FieldType msgType = nameToField.get("MsgType");
-        fieldNumbersToTypes.put(msgType.getNumber(), FIELD_TYPES.get(msgType.getType()));
+    private LinkedHashMap<Integer, FieldType> buildHeaderFieldNumbersToTypes(HeaderTrailerType header, Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField) {
+        final LinkedHashMap<Integer, FieldType> headerFieldNumbersToTypes = new LinkedHashMap<>();
+        for (io.github.zlooo.spec.generator.xml.model.FieldType field : header.getField()) {
+            final io.github.zlooo.spec.generator.xml.model.FieldType actualField = nameToField.get(field.getName());
+            headerFieldNumbersToTypes.put(actualField.getNumber(), FIELD_TYPES.get(actualField.getType()));
+        }
+        for (GroupType groupType : header.getGroup()) {
+            headerFieldNumbersToTypes.put(nameToField.get(groupType.getName()).getNumber(), FieldType.GROUP);
+        }
+        return headerFieldNumbersToTypes;
+    }
+
+    private LinkedHashMap<Integer, FieldType> toNumberTypeMap(List<io.github.zlooo.spec.generator.xml.model.FieldType> fields) {
+        final LinkedHashMap<Integer, FieldType> fieldNumbersToTypes = new LinkedHashMap<>(fields.size());
         for (final io.github.zlooo.spec.generator.xml.model.FieldType field : fields) {
             if (!fieldNumbersToTypes.containsKey(field.getNumber())) {
                 fieldNumbersToTypes.put(field.getNumber(), FIELD_TYPES.get(field.getType()));
             }
         }
+        return fieldNumbersToTypes;
     }
 
     private BiFunction<? super GroupType, ? super GroupType, ? extends GroupType> groupMergingFunction() {
@@ -163,7 +166,8 @@ public class DictionaryFileProcessor {
     @Data
     public static final class Result {
         private Set<String> messageTypes;
-        private Map<Integer, FieldType> fieldNumbersToTypes;
+        private LinkedHashMap<Integer, FieldType> headerFieldsNumberToTypes;
+        private LinkedHashMap<Integer, FieldType> bodyFieldsNumbersToTypes;
         private ApplicationVersionID applicationVersionID;
         private Map<Integer, FixSpec.FieldNumberType[]> repeatingGroups;
     }

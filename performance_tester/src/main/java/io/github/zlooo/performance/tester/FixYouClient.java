@@ -1,12 +1,13 @@
 package io.github.zlooo.performance.tester;
 
+import io.github.zlooo.fixyou.DefaultConfiguration;
 import io.github.zlooo.fixyou.Engine;
 import io.github.zlooo.fixyou.FIXYouConfiguration;
 import io.github.zlooo.fixyou.fix.commons.FixMessageListener;
 import io.github.zlooo.fixyou.netty.FIXYouNetty;
+import io.github.zlooo.fixyou.netty.utils.FixSpec50SP2;
 import io.github.zlooo.fixyou.session.SessionConfig;
 import io.github.zlooo.fixyou.session.SessionID;
-import io.github.zlooo.performance.tester.fixyou.FixSpec50SP2;
 import io.github.zlooo.performance.tester.fixyou.FixSpec50SP2Min;
 import io.github.zlooo.performance.tester.fixyou.NewOrderSingleReceivingMessageListener;
 import lombok.SneakyThrows;
@@ -33,7 +34,17 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final SessionID sessionID = createSessionID(config);
         log.info("About to start FIXYou for session {} listening on port {}", sessionID, port);
         final FixMessageListener fixMessageListener = createFixMessageListener(scenarioId);
-        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder().acceptorBindInterface(bindInterface).acceptorListenPort(port).initiator(false).separateIoFromAppThread(true).build(), fixMessageListener);
+        final Engine engine = FIXYouNetty.create(FIXYouConfiguration.builder()
+                                                                    .acceptorBindInterface(bindInterface)
+                                                                    .acceptorListenPort(port)
+                                                                    .initiator(false)
+                                                                    .separateIoFromAppThread(true)
+                                                                    .regionPoolSize(DefaultConfiguration.REGION_POOL_SIZE * 10)
+                                                                    .regionSize((short) (DefaultConfiguration.REGION_SIZE * 2))
+                                                                    .fixMessageListenerInvokerDisruptorSize(DefaultConfiguration.FIX_MESSAGE_LISTENER_INVOKER_DISRUPTOR_SIZE * 2)
+                                                                    .fixMessagePoolSize(DefaultConfiguration.FIX_MESSAGE_POOL_SIZE * 2)
+                                                                    .fixSpecOrderedFields(false)
+                                                                    .build(), fixMessageListener);
         wire(fixMessageListener, engine);
         engine.registerSession(sessionID, minDictionary ? new FixSpec50SP2Min() : new FixSpec50SP2(), new SessionConfig().setPort(port).setConsolidateFlushes(true)).start().get();
         log.info("FIXYou started");
@@ -49,7 +60,7 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         final String beginString = (String) config.get("beginString");
         final String senderCompId = (String) config.get("senderCompId");
         final String targetCompId = (String) config.get("targetCompId");
-        return new SessionID(beginString.toCharArray(), beginString.length(), senderCompId.toCharArray(), senderCompId.length(), targetCompId.toCharArray(), targetCompId.length());
+        return new SessionID(beginString, senderCompId, targetCompId);
     }
 
     @Override
