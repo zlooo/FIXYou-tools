@@ -18,10 +18,12 @@
     <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
         <queueSize>4096</queueSize>
         <neverBlock>true</neverBlock>
-        <appender-ref ref="FILE" />
+        <appender-ref ref="FILE"/>
     </appender>
 
-    <root level="info">
-        <appender-ref ref="FILE" />
+    <logger name="sumup" level="info"/>
+
+    <root level="error">
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>

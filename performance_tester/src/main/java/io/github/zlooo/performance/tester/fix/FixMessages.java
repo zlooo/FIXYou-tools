@@ -1,5 +1,10 @@
 package io.github.zlooo.performance.tester.fix;
 
+import fixio.fixprotocol.FieldType;
+import fixio.fixprotocol.FixMessageBuilder;
+import fixio.fixprotocol.FixMessageBuilderImpl;
+import fixio.fixprotocol.MessageTypes;
+import fixio.fixprotocol.fields.FixedPointNumber;
 import io.github.zlooo.fixyou.parser.model.FixMessage;
 import lombok.experimental.UtilityClass;
 import quickfix.Message;
@@ -7,6 +12,9 @@ import quickfix.SessionID;
 import quickfix.field.*;
 import quickfix.fix50sp2.ExecutionReport;
 import quickfix.fix50sp2.NewOrderSingle;
+import quickfix.fix50sp2.QuoteCancel;
+import quickfix.fix50sp2.QuoteRequest;
+import quickfix.fix50sp2.component.QuotReqGrp;
 import quickfix.fixt11.Logon;
 import quickfix.fixt11.Logout;
 
@@ -55,6 +63,26 @@ public class FixMessages {
         putSessionIdInfo(sessionID, executionReport.getHeader(), false);
         putStandardHeaderFields(executionReport.getHeader(), sequenceNumber);
         return executionReport.toString();
+    }
+
+    public static String quoteRequest(SessionID sessionID, int sequenceNumber, String quoteRequestId) {
+        final QuoteRequest quoteRequest = new QuoteRequest();
+        quoteRequest.set(new QuoteReqID(quoteRequestId));
+        final QuotReqGrp.NoRelatedSym noRelatedSym = new QuotReqGrp.NoRelatedSym();
+        noRelatedSym.set(new Symbol("VOD.L"));
+        quoteRequest.addGroup(noRelatedSym);
+        putSessionIdInfo(sessionID, quoteRequest.getHeader(), false);
+        putStandardHeaderFields(quoteRequest.getHeader(), sequenceNumber);
+        return quoteRequest.toString();
+    }
+
+    public static String quoteCancel(SessionID sessionID, int sequenceNumber, String quoteRequestId) {
+        final QuoteCancel quoteCancel = new QuoteCancel();
+        quoteCancel.set(new QuoteReqID(quoteRequestId));
+        quoteCancel.set(new QuoteCancelType(QuoteCancelType.CANCEL_ALL_QUOTES));
+        putSessionIdInfo(sessionID, quoteCancel.getHeader(), false);
+        putStandardHeaderFields(quoteCancel.getHeader(), sequenceNumber);
+        return quoteCancel.toString();
     }
 
     public static FixMessage toExecutionReport(FixMessage fixMessage, CharSequence clordId, char[] executionId, char execType, char orderStatus, char[] orderId) {
@@ -109,5 +137,16 @@ public class FixMessages {
         executionReport.set(new LeavesQty(LEAVES_QTY));
         executionReport.set(new CumQty(CUM_QTY));
         return executionReport;
+    }
+
+    public static FixMessageBuilder createFixioExecutionReport(String clordid, int executionId, char execType, char orderStatus, int orderId) {
+        return new FixMessageBuilderImpl(MessageTypes.EXECUTION_REPORT).add(FieldType.OrderID, String.valueOf(orderId))
+                                                                       .add(FieldType.ClOrdID, clordid)
+                                                                       .add(FieldType.ExecID, orderId + "_" + executionId)
+                                                                       .add(FieldType.ExecType, execType)
+                                                                       .add(FieldType.OrdStatus, orderStatus)
+                                                                       .add(FieldType.Symbol, "VOD.L")
+                                                                       .add(FieldType.Side, Side.BUY).add(FieldType.LeavesQty, new FixedPointNumber(LEAVES_QTY_LONG))
+                                                                       .add(FieldType.CumQty, new FixedPointNumber(CUM_QTY_LONG));
     }
 }

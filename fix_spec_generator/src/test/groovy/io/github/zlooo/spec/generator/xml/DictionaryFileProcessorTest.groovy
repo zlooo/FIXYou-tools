@@ -42,7 +42,10 @@ class DictionaryFileProcessorTest extends Specification {
         def result = dictionaryFileProcessor.process(fix50sp2.getValue())
 
         then:
-        Assertions.assertThat(result.getHeaderFields()).contains(8, 9, 35, 49, 56, 34, 43, 97, 52, 627)
-        Assertions.assertThat(result.getFieldNumbersToTypes()).doesNotContainKeys(8, 9, 35, 49, 56, 34, 43, 97, 52, 627)
+        Assertions.
+                assertThat(result.getHeaderFieldsNumberToTypes()).
+                contains(Map.entry(8, FieldType.CHAR_ARRAY), Map.entry(9, FieldType.LONG), Map.entry(35, FieldType.CHAR_ARRAY), Map.entry(49, FieldType.CHAR_ARRAY), Map.entry(56, FieldType.CHAR_ARRAY), Map.entry(34, FieldType.LONG),
+                         Map.entry(43, FieldType.BOOLEAN), Map.entry(97, FieldType.BOOLEAN), Map.entry(52, FieldType.TIMESTAMP), Map.entry(627, FieldType.GROUP))
+        Assertions.assertThat(result.getBodyFieldsNumbersToTypes()).doesNotContainKeys(8, 9, 35, 49, 56, 34, 43, 97, 52, 627)
     }
 }

@@ -1,5 +1,7 @@
 package io.github.zlooo.performance.tester.scenario;
 
+import org.slf4j.Logger;
+
 public interface TestScenario {
 
     void before();
@@ -8,7 +10,7 @@ public interface TestScenario {
 
     void execute(int times);
 
-    void logSumup();
+    void logSumup(Logger logger);
 
     void reset();
 }

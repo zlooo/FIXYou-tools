@@ -1,11 +1,14 @@
 package io.github.zlooo.performance.tester;
 
+import io.github.zlooo.performance.tester.quickfix.NewOrderSindleReceivingApplication;
+import io.github.zlooo.performance.tester.quickfix.QuoteStreamingApplication;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
-import io.github.zlooo.performance.tester.quickfix.NewOrderSindleReceivingApplication;
 import quickfix.*;
 import quickfix.fixt11.MessageFactory;
+
+import java.util.Map;
 
 @Slf4j
 @CommandLine.Command(name = "quickfix", mixinStandardHelpOptions = true)
@@ -17,7 +20,8 @@ public class QuickfixClient extends AbstractPerformanceTesterSubcommand {
     @SneakyThrows
     @CommandLine.Command(name = "acceptor")
     private int acceptor(@CommandLine.Option(names = {"-s", "--scenario"}, description = "ID of scenario that should be run", required = true) String scenarioId) {
-        final SessionSettings sessionSettings = new SessionSettings("quickfixConfigAcceptor.properties");
+        final Map<String, Object> config = getConfig("quickfix", "acceptor");
+        final SessionSettings sessionSettings = new SessionSettings((String) config.get("confFile"));
         log.info("About to start quickfix with settings {}", sessionSettings);
         final SocketAcceptor socketAcceptor =
                 SocketAcceptor.newBuilder()
@@ -41,6 +45,8 @@ public class QuickfixClient extends AbstractPerformanceTesterSubcommand {
         switch (scenarioId) {
             case "newOrderSingleReceiving":
                 return new NewOrderSindleReceivingApplication();
+            case "quoteStreaming":
+                return new QuoteStreamingApplication();
             default:
                 throw new PerformanceTesterException("Unrecognized scenario id " + scenarioId);
         }

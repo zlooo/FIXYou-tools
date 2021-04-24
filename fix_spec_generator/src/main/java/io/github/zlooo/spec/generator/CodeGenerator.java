@@ -15,6 +15,7 @@ class CodeGenerator {
     private static final String ARRAY_ELEMENT_SEPARATOR = ", ";
     private static final String ARRAY_ENDING = "}";
     private static final char BACKSLASH = '\'';
+    private static final String RETURN = "return ";
 
     JavaFile generateFixSpecSourceCode(DictionaryFileProcessor.Result procssingResult, String packageName) {
         final LinkedHashMap<Integer, FieldType> bodyFieldNumberToType = procssingResult.getBodyFieldsNumbersToTypes();
@@ -171,10 +172,10 @@ class CodeGenerator {
     }
 
     private static MethodSpec getFieldsOrderMethod(String methodName, String fieldName) {
-        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int[].class).addStatement("return " + fieldName).build();
+        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(int[].class).addStatement(RETURN + fieldName).build();
     }
 
     private static MethodSpec getFieldTypesMethod(String methodName, String fieldName) {
-        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(FieldType[].class).addStatement("return " + fieldName).build();
+        return MethodSpec.methodBuilder(methodName).addModifiers(Modifier.PUBLIC).addAnnotation(Override.class).returns(FieldType[].class).addStatement(RETURN + fieldName).build();
     }
 }

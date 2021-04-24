@@ -49,11 +49,11 @@ public class DictionaryFileProcessor {
 
     private LinkedHashMap<Integer, FieldType> buildHeaderFieldNumbersToTypes(HeaderTrailerType header, Map<String, io.github.zlooo.spec.generator.xml.model.FieldType> nameToField) {
         final LinkedHashMap<Integer, FieldType> headerFieldNumbersToTypes = new LinkedHashMap<>();
-        for (io.github.zlooo.spec.generator.xml.model.FieldType field : header.getField()) {
+        for (final io.github.zlooo.spec.generator.xml.model.FieldType field : header.getField()) {
             final io.github.zlooo.spec.generator.xml.model.FieldType actualField = nameToField.get(field.getName());
             headerFieldNumbersToTypes.put(actualField.getNumber(), FIELD_TYPES.get(actualField.getType()));
         }
-        for (GroupType groupType : header.getGroup()) {
+        for (final GroupType groupType : header.getGroup()) {
             headerFieldNumbersToTypes.put(nameToField.get(groupType.getName()).getNumber(), FieldType.GROUP);
         }
         return headerFieldNumbersToTypes;

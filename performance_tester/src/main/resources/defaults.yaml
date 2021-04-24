@@ -15,4 +15,7 @@ fixyou:
     targetCompId: probe
 quickfix:
   acceptor:
-    confFile: quickfixConfigAcceptor.properties
+    confFile: performance_tester\src\main\resources\quickfixConfigAcceptor.properties
+fixio:
+  port:
+    1234

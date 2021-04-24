@@ -8,8 +8,10 @@ import io.github.zlooo.fixyou.netty.FIXYouNetty;
 import io.github.zlooo.fixyou.netty.utils.FixSpec50SP2;
 import io.github.zlooo.fixyou.session.SessionConfig;
 import io.github.zlooo.fixyou.session.SessionID;
+import io.github.zlooo.performance.tester.fixyou.AbstractFIXYouTestMessageListener;
 import io.github.zlooo.performance.tester.fixyou.FixSpec50SP2Min;
 import io.github.zlooo.performance.tester.fixyou.NewOrderSingleReceivingMessageListener;
+import io.github.zlooo.performance.tester.fixyou.QuoteStreamingMessageListener;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import picocli.CommandLine;
@@ -19,6 +21,8 @@ import java.util.Map;
 @Slf4j
 @CommandLine.Command(name = "fixyou", mixinStandardHelpOptions = true)
 public class FixYouClient extends AbstractPerformanceTesterSubcommand {
+
+    private static final int REGION_POOL_SIZE = DefaultConfiguration.REGION_POOL_SIZE * 10;
 
     @CommandLine.Spec
     protected CommandLine.Model.CommandSpec commandSpec;
@@ -39,7 +43,7 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
                                                                     .acceptorListenPort(port)
                                                                     .initiator(false)
                                                                     .separateIoFromAppThread(true)
-                                                                    .regionPoolSize(DefaultConfiguration.REGION_POOL_SIZE * 10)
+                                                                    .regionPoolSize(REGION_POOL_SIZE)
                                                                     .regionSize((short) (DefaultConfiguration.REGION_SIZE * 2))
                                                                     .fixMessageListenerInvokerDisruptorSize(DefaultConfiguration.FIX_MESSAGE_LISTENER_INVOKER_DISRUPTOR_SIZE * 2)
                                                                     .fixMessagePoolSize(DefaultConfiguration.FIX_MESSAGE_POOL_SIZE * 2)
@@ -72,14 +76,16 @@ public class FixYouClient extends AbstractPerformanceTesterSubcommand {
         switch (scenarioId) {
             case "newOrderSingleReceiving":
                 return new NewOrderSingleReceivingMessageListener();
+            case "quoteStreaming":
+                return new QuoteStreamingMessageListener();
             default:
                 throw new PerformanceTesterException("Unrecognized scenario id " + scenarioId);
         }
     }
 
     private void wire(FixMessageListener fixMessageListener, Engine engine) {
-        if (fixMessageListener instanceof NewOrderSingleReceivingMessageListener) {
-            ((NewOrderSingleReceivingMessageListener) fixMessageListener).setFixMessageObjectPool(FIXYouNetty.fixMessagePool(engine));
+        if (fixMessageListener instanceof AbstractFIXYouTestMessageListener) {
+            ((AbstractFIXYouTestMessageListener) fixMessageListener).setFixMessageObjectPool(FIXYouNetty.fixMessagePool(engine));
         }
     }
 }
