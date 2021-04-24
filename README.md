@@ -16,9 +16,9 @@ Simple program that takes Quickfix xml data dictionary(ies) and generates implem
 ## Performance Tester
 Small program that can be used to execute simple test scenarios. It's primary purpose is to do performance tests of FIXYou and Quickfix using the same scenario so that they can be compared. Run with -h, --help or no option at all to see usage information.
 ### Probe test scenarios
-There are 2 test scenarios currently supported by probe subcommand
+There are 3 test scenarios currently supported by probe subcommand
 1. `newOrderSingleSending` is meant to simulate exchange client. This scenario executes following steps:
-    - Send login message with no credentials</li>
+    - Send login message with no credentials
     - Wait for login response
     - Send burst of NewOrderSingle messages, burst size is configured by -t option
     - For every NewOrderSingle message 3 ExecutionReport messages are expected, clordId field is used to match ExecutionReport to NewOrderSinge
@@ -28,6 +28,12 @@ There are 2 test scenarios currently supported by probe subcommand
     - Wait for login response
     - For every NewOrderSingle message that is received, 3 ExecutionReport messages are sent by probe
     - Number of NewOrderSingle messages that's expected is configured by -t option
+3. `quoteReceiving`
+    - Send login message with no credentials
+    - Wait for login response
+    - Send `Quote Request` message, type `R`
+    - Wait for specified number of `Quote`, type `S`, messages
+    - Send `Quote Cancel` message, type `Z`
 
 Example usage:
 `java -jar performance_tester.jar probe initiator -s newOrderSingleSending -t 10000 -w 1000` will execute newOrderSingleSending scenario, first warming up by sending 1000 NewOrderSingle and then sending 10000 NewOrderSingle and waiting for ExecutionReport responses with matching clordid. Time is measured in nano seconds by means of `System.nanoTime()`
