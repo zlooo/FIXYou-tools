@@ -6,7 +6,6 @@ import io.github.zlooo.performance.tester.fix.FixMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
-import org.slf4j.Logger;
 import quickfix.SessionID;
 import quickfix.field.ExecType;
 import quickfix.field.OrdStatus;
@@ -19,6 +18,8 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
     private int orderId = 1;
     private int executionId = 1;
     private int timesExecuted;
+    private long startTime;
+    private long endTime;
 
     public NewOrderSingleReceivingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange) {
         super(sessionID, fixMessageExchange);
@@ -26,6 +27,7 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
 
     @Override
     public void execute(int times) {
+        startTime = System.nanoTime();
         timesExecuted = times;
         int timesRemaining = times;
         while (timesRemaining > 0) {
@@ -44,15 +46,18 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
                 idleStrategy.idle(0);
             }
         }
+        endTime = System.nanoTime();
     }
 
     @Override
     public void reset() {
         timesExecuted = 0;
+        startTime = 0;
+        endTime = 0;
     }
 
     @Override
-    public void logSumup(Logger logger) {
-        logger.info("Sent {} execution reports, ", timesExecuted * EXECUTION_REPORTS_PER_NEW_ORDER_SINGLE);
+    public Sumup getSumup() {
+        return new Sumup("New Order Single Receiging", timesExecuted * EXECUTION_REPORTS_PER_NEW_ORDER_SINGLE, endTime - startTime);
     }
 }

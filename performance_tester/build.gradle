@@ -17,6 +17,7 @@ dependencies {
     implementation group: 'com.github.vladimir-bukhtoyarov', name: 'rolling-metrics-core', version: "$rollingMetricsCoreVersion"
     implementation group: 'org.hdrhistogram', name: 'HdrHistogram', version: "$hdrHistogramVersion"
     implementation group: 'com.github.kpavlov.fixio', name: 'fixio', version: "$fixioVersion"
+    implementation group: 'com.google.guava', name: 'guava', version: "$guavaVersion"
 
     annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
 }

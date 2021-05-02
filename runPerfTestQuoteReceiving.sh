@@ -25,3 +25,4 @@ testRun 5 20 30000
 testRun 10 100 30000
 testRun 20 200 30000
 testRun 50 500 30000
+$java -jar "performance_tester/build/libs/performance_tester-$perfTesterVersion-all.jar" sumup `ls perfTester_*`
