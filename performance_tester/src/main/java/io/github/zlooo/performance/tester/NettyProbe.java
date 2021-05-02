@@ -3,6 +3,7 @@ package io.github.zlooo.performance.tester;
 import io.github.zlooo.performance.tester.netty.NettyMessageExchange;
 import io.github.zlooo.performance.tester.netty.NettyUtils;
 import io.github.zlooo.performance.tester.scenario.AbstractFixScenario;
+import io.github.zlooo.performance.tester.scenario.SumupOperations;
 import io.github.zlooo.performance.tester.scenario.TestScenarioFactory;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -10,8 +11,6 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 import quickfix.SessionID;
 
@@ -21,8 +20,6 @@ import java.util.Map;
 @CommandLine.Command(name = "probe", mixinStandardHelpOptions = true, description = {
         "Launches in probe mode, meant to execute test scenario and log results. When run in probe mode no fix engine is started, just a simple TCP connection is established and predefined fix messages are sent"})
 public class NettyProbe extends AbstractPerformanceTesterSubcommand {
-
-    private static final Logger SUMUP_LOGGER = LoggerFactory.getLogger("sumup");
 
     @CommandLine.Spec
     protected CommandLine.Model.CommandSpec commandSpec;
@@ -51,7 +48,7 @@ public class NettyProbe extends AbstractPerformanceTesterSubcommand {
         testScenario.execute(times);
         log.info("Executing after");
         testScenario.after();
-        testScenario.logSumup(SUMUP_LOGGER);
+        SumupOperations.log(testScenario.getSumup());
         channel.close().sync();
         return 0;
     }

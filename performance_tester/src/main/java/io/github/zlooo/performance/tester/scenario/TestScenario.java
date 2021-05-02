@@ -1,6 +1,6 @@
 package io.github.zlooo.performance.tester.scenario;
 
-import org.slf4j.Logger;
+import lombok.Value;
 
 public interface TestScenario {
 
@@ -10,7 +10,14 @@ public interface TestScenario {
 
     void execute(int times);
 
-    void logSumup(Logger logger);
+    Sumup getSumup();
 
     void reset();
+
+    @Value
+    class Sumup {
+        private String scenarioName;
+        private int samples;
+        private long timeTaken;
+    }
 }

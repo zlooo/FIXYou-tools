@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
-import org.slf4j.Logger;
 import quickfix.SessionID;
 
 import java.util.HashMap;
@@ -73,8 +72,8 @@ public class NewOrderSingleSendingScenario extends AbstractFixScenario {
     }
 
     @Override
-    public void logSumup(Logger logger) {
-        logger.info("Messages sent {}\nmessages received {}\ntest time in nanos {}", timesExecuted, timesExecuted * EXPECTED_NUMBER_OF_RESPONSES, endTime - startTime);
+    public Sumup getSumup() {
+        return new Sumup("New Order Single Sending", timesExecuted * EXPECTED_NUMBER_OF_RESPONSES, endTime - startTime);
     }
 
     @AllArgsConstructor

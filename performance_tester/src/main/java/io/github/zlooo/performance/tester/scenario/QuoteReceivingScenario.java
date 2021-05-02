@@ -5,7 +5,6 @@ import io.github.zlooo.performance.tester.fix.FixMessages;
 import lombok.extern.slf4j.Slf4j;
 import org.agrona.concurrent.BackoffIdleStrategy;
 import org.agrona.concurrent.IdleStrategy;
-import org.slf4j.Logger;
 import quickfix.SessionID;
 
 import java.util.UUID;
@@ -47,8 +46,8 @@ public class QuoteReceivingScenario extends AbstractFixScenario {
     }
 
     @Override
-    public void logSumup(Logger logger) {
-        logger.info("Received {} quotes in {} nanos", timesExecuted * numberOfQuotes, endTime - startTime);
+    public Sumup getSumup() {
+        return new Sumup("Quote Receiving", timesExecuted * numberOfQuotes, endTime - startTime);
     }
 
     @Override
