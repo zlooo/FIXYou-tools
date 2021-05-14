@@ -12,6 +12,7 @@ import quickfix.SessionID;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class NewOrderSingleSendingScenario extends AbstractFixScenario {
@@ -22,8 +23,8 @@ public class NewOrderSingleSendingScenario extends AbstractFixScenario {
     private long endTime;
     private int timesExecuted;
 
-    public NewOrderSingleSendingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange) {
-        super(sessionID, fixMessageExchange);
+    public NewOrderSingleSendingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange, AtomicInteger sequencer) {
+        super(sequencer, sessionID, fixMessageExchange);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class NewOrderSingleSendingScenario extends AbstractFixScenario {
         final String[] messages = new String[times];
         for (int i = 0; i < times; i++) {
             final String clordid = UUID.randomUUID().toString();
-            messages[i] = FixMessages.newOrderSingle(getSessionID(), sequenceNumber++, clordid);
+            messages[i] = FixMessages.newOrderSingle(getSessionID(), sequencer.incrementAndGet(), clordid);
             clordIDsToExpectedMessageCount.put(clordid, new Counter(EXPECTED_NUMBER_OF_RESPONSES));
         }
         log.info("Done, spamming session {}", getSessionID());

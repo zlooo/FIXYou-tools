@@ -7,18 +7,20 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import quickfix.SessionID;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Getter
 @RequiredArgsConstructor
 public abstract class AbstractFixScenario implements TestScenario {
 
     private static final int HEARTBEAT_INTERVAL = 30;
-    protected int sequenceNumber = 1;
+    protected final AtomicInteger sequencer;
     private final SessionID sessionID;
     private final MessageExchange<String> fixMessageExchange;
 
     @Override
     public void before() {
-        fixMessageExchange.sendMessage(FixMessages.logon(sessionID, sequenceNumber++, HEARTBEAT_INTERVAL, true));
+        fixMessageExchange.sendMessage(FixMessages.logon(sessionID, sequencer.incrementAndGet(), HEARTBEAT_INTERVAL, true));
         fixMessageExchange.endOfBatch();
         String logonResponse;
         while ((logonResponse = fixMessageExchange.getSingleMessage()) == null) {
@@ -31,7 +33,7 @@ public abstract class AbstractFixScenario implements TestScenario {
 
     @Override
     public void after() {
-        fixMessageExchange.sendMessage(FixMessages.logout(sessionID, sequenceNumber++, null));
+        fixMessageExchange.sendMessage(FixMessages.logout(sessionID, sequencer.incrementAndGet(), null));
         fixMessageExchange.endOfBatch();
         while (true) {
             final String logoutResponse = fixMessageExchange.getSingleMessage();

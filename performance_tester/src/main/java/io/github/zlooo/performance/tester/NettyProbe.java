@@ -35,10 +35,11 @@ public class NettyProbe extends AbstractPerformanceTesterSubcommand {
         final Map<String, Object> config = getConfig("probe", "initiator");
         final int port = (int) config.get("port");
         final String host = (String) config.get("host");
-        final Channel channel = new Bootstrap().group(new NioEventLoopGroup(1)).channel(NioSocketChannel.class).handler(NettyUtils.channelInitializer()).connect(host, port).sync().channel();
+        final SessionID sessionID = createSessionID(config);
+        final Channel channel = new Bootstrap().group(new NioEventLoopGroup(1)).channel(NioSocketChannel.class).handler(NettyUtils.channelInitializer(sessionID)).connect(host, port).sync().channel();
         log.info("Connected to {}:{}", host, port);
         final NettyMessageExchange nettyMessageExchange = new NettyMessageExchange(channel);
-        final AbstractFixScenario testScenario = TestScenarioFactory.createTestScenario(scenarioId, nettyMessageExchange, createSessionID(config), numberOfQuotes);
+        final AbstractFixScenario testScenario = TestScenarioFactory.createTestScenario(scenarioId, nettyMessageExchange, sessionID, numberOfQuotes, channel.attr(NettyUtils.SEQUENCER_KEY).get());
         log.info("Executing before");
         testScenario.before();
         log.info("Executing test scenario {} times as warm-up", warmUpTimes);

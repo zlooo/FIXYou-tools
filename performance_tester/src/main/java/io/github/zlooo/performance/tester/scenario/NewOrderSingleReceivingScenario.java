@@ -10,6 +10,8 @@ import quickfix.SessionID;
 import quickfix.field.ExecType;
 import quickfix.field.OrdStatus;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 @Slf4j
 public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
 
@@ -21,8 +23,8 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
     private long startTime;
     private long endTime;
 
-    public NewOrderSingleReceivingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange) {
-        super(sessionID, fixMessageExchange);
+    public NewOrderSingleReceivingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange, AtomicInteger sequencer) {
+        super(sequencer, sessionID, fixMessageExchange);
     }
 
     @Override
@@ -34,9 +36,9 @@ public class NewOrderSingleReceivingScenario extends AbstractFixScenario {
             final String message = getFixMessageExchange().getSingleMessage();
             if (message != null) {
                 final String clordid = FixMessageUtils.getClordid(message);
-                final String pendingNew = FixMessages.executionReport(getSessionID(), sequenceNumber++, clordid, executionId++, ExecType.PENDING_NEW, OrdStatus.PENDING_NEW, orderId++);
-                final String newOrder = FixMessages.executionReport(getSessionID(), sequenceNumber++, clordid, executionId++, ExecType.NEW, OrdStatus.NEW, orderId);
-                final String filled = FixMessages.executionReport(getSessionID(), sequenceNumber++, clordid, executionId++, ExecType.FILL, OrdStatus.FILLED, orderId);
+                final String pendingNew = FixMessages.executionReport(getSessionID(), sequencer.incrementAndGet(), clordid, executionId++, ExecType.PENDING_NEW, OrdStatus.PENDING_NEW, orderId++);
+                final String newOrder = FixMessages.executionReport(getSessionID(), sequencer.incrementAndGet(), clordid, executionId++, ExecType.NEW, OrdStatus.NEW, orderId);
+                final String filled = FixMessages.executionReport(getSessionID(), sequencer.incrementAndGet(), clordid, executionId++, ExecType.FILL, OrdStatus.FILLED, orderId);
                 getFixMessageExchange().sendMessage(pendingNew);
                 getFixMessageExchange().sendMessage(newOrder);
                 getFixMessageExchange().sendMessage(filled);

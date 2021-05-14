@@ -19,7 +19,7 @@ ext {
     gcMonitorVersion = '1.0.0-RC2'
     rollingMetricsCoreVersion = '3.0.0-RC5'
     hdrHistogramVersion = '2.1.12'
-    fixyouVersion = '0.0.0-85'
+    fixyouVersion = '0.0.0-92'
     fixioVersion = '1.2'
     guavaVersion = '30.1.1-jre'
     //    test dependencies

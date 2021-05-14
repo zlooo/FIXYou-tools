@@ -15,6 +15,7 @@ import quickfix.fix50sp2.NewOrderSingle;
 import quickfix.fix50sp2.QuoteCancel;
 import quickfix.fix50sp2.QuoteRequest;
 import quickfix.fix50sp2.component.QuotReqGrp;
+import quickfix.fixt11.Heartbeat;
 import quickfix.fixt11.Logon;
 import quickfix.fixt11.Logout;
 
@@ -83,6 +84,21 @@ public class FixMessages {
         putSessionIdInfo(sessionID, quoteCancel.getHeader(), false);
         putStandardHeaderFields(quoteCancel.getHeader(), sequenceNumber);
         return quoteCancel.toString();
+    }
+
+    public static String heartbeat(SessionID sessionID, int sequenceNumber) {
+        final Heartbeat heartbeat = new Heartbeat();
+        putSessionIdInfo(sessionID, heartbeat.getHeader(), false);
+        putStandardHeaderFields(heartbeat.getHeader(), sequenceNumber);
+        return heartbeat.toString();
+    }
+
+    public static String heartbeat(SessionID sessionID, int sequenceNumber, String testRequestId) {
+        final Heartbeat heartbeat = new Heartbeat();
+        heartbeat.set(new TestReqID(testRequestId));
+        putSessionIdInfo(sessionID, heartbeat.getHeader(), false);
+        putStandardHeaderFields(heartbeat.getHeader(), sequenceNumber);
+        return heartbeat.toString();
     }
 
     public static FixMessage toExecutionReport(FixMessage fixMessage, CharSequence clordId, char[] executionId, char execType, char orderStatus, char[] orderId) {
