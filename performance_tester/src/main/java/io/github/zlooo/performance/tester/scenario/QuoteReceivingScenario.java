@@ -8,6 +8,7 @@ import org.agrona.concurrent.IdleStrategy;
 import quickfix.SessionID;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 public class QuoteReceivingScenario extends AbstractFixScenario {
@@ -18,15 +19,15 @@ public class QuoteReceivingScenario extends AbstractFixScenario {
     private long endTime;
     private int timesExecuted;
 
-    public QuoteReceivingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange, int numberOfQuotes) {
-        super(sessionID, fixMessageExchange);
+    public QuoteReceivingScenario(SessionID sessionID, MessageExchange<String> fixMessageExchange, int numberOfQuotes, AtomicInteger sequencer) {
+        super(sequencer, sessionID, fixMessageExchange);
         this.numberOfQuotes = numberOfQuotes;
     }
 
     @Override
     public void execute(int times) {
         final String quoteRequestId = UUID.randomUUID().toString();
-        final String quoteRequest = FixMessages.quoteRequest(getSessionID(), sequenceNumber++, quoteRequestId);
+        final String quoteRequest = FixMessages.quoteRequest(getSessionID(), sequencer.incrementAndGet(), quoteRequestId);
         final MessageExchange<String> fixMessageExchange = getFixMessageExchange();
         fixMessageExchange.sendMessage(quoteRequest);
         fixMessageExchange.endOfBatch();
@@ -40,7 +41,7 @@ public class QuoteReceivingScenario extends AbstractFixScenario {
             }
         }
         endTime = System.nanoTime();
-        fixMessageExchange.sendMessage(FixMessages.quoteCancel(getSessionID(), sequenceNumber++, quoteRequestId));
+        fixMessageExchange.sendMessage(FixMessages.quoteCancel(getSessionID(), sequencer.incrementAndGet(), quoteRequestId));
         fixMessageExchange.endOfBatch();
         timesExecuted = times;
     }

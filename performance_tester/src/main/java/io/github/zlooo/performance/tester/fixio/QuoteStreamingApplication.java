@@ -3,6 +3,7 @@ package io.github.zlooo.performance.tester.fixio;
 import fixio.fixprotocol.FieldType;
 import fixio.fixprotocol.FixMessage;
 import fixio.fixprotocol.FixMessageBuilderImpl;
+import fixio.fixprotocol.MessageTypes;
 import fixio.fixprotocol.fields.FixedPointNumber;
 import fixio.handlers.FixApplicationAdapter;
 import fixio.validator.BusinessRejectException;
@@ -36,6 +37,10 @@ public class QuoteStreamingApplication extends FixApplicationAdapter implements 
                 break;
             case FixConstants.QUOTE_CANCEL_AS_STRING:
                 quoteRequestId = null;
+                break;
+            case MessageTypes.LOGOUT:
+                quoteRequestId = null;
+                ctx.writeAndFlush(new FixMessageBuilderImpl(MessageTypes.LOGOUT));
                 break;
             default:
                 log.error("Unrecognized message type {}", messageType);
