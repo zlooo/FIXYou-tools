@@ -2,6 +2,10 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '5.2.0'
 }
 
+ext{
+    specsVersion = '0.1.0'
+}
+
 dependencies {
     implementation group: 'io.github.zlooo.fixyou', name: 'api', version: "$fixyouVersion"
     implementation group: 'org.slf4j', name: 'slf4j-api', version: "$slf4jVersion"
@@ -25,3 +29,5 @@ jar {
         attributes "Main-Class": "io.github.zlooo.spec.generator.FixSpecGenerator"
     }
 }
+
+apply from: 'standardSpecs.gradle'

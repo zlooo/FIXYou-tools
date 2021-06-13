@@ -48,4 +48,19 @@ class DictionaryFileProcessorTest extends Specification {
                          Map.entry(43, FieldType.BOOLEAN), Map.entry(97, FieldType.BOOLEAN), Map.entry(52, FieldType.TIMESTAMP), Map.entry(627, FieldType.GROUP))
         Assertions.assertThat(result.getBodyFieldsNumbersToTypes()).doesNotContainKeys(8, 9, 35, 49, 56, 34, 43, 97, 52, 627)
     }
+
+    def "should process all standard fix dictionaries without exception"(){
+        setup:
+        JAXBElement<FixType> dictionary = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller().unmarshal(XMLModelTest.STANDARD_DICTIONARIES.find { file -> file.getName() == dictionaryFile })
+
+        when:
+        def result = dictionaryFileProcessor.process(dictionary.getValue())
+
+        then:
+        noExceptionThrown()
+        result!=null
+
+        where:
+        dictionaryFile<<["FIX40.xml", "FIX41.xml", "FIX42.xml", "FIX43.xml", "FIX44.xml", "FIX50.xml", "FIX50SP1.xml", "FIX50SP2.xml", "FIXT11.xml"]
+    }
 }
