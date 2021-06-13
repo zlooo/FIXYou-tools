@@ -1,0 +1,464 @@
+//probably can be refactored to add tasks dynamically in some kind of loop
+task generate40(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX40.xml', '-o', "${buildDir}/standardSpecs/40/", '-p', 'io.github.zlooo.fixyou.fix40', '-j', 'fix40_spec.jar'
+}
+
+task sourcesJar40(type: Jar, dependsOn: generate40) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix40_spec'
+    from "${buildDir}/standardSpecs/40/"
+    excludes = ['fix40_spec.jar']
+}
+
+task javadocs40(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/40/"
+    excludes = ['fix40_spec.jar']
+}
+
+task javadocJar40(type: Jar, dependsOn: javadocs40) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix40_spec'
+    from javadoc.destinationDir
+}
+
+task generate41(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX41.xml', '-o', "${buildDir}/standardSpecs/41/", '-p', 'io.github.zlooo.fixyou.fix41', '-j', 'fix41_spec.jar'
+}
+
+task sourcesJar41(type: Jar, dependsOn: generate41) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix41_spec'
+    from "${buildDir}/standardSpecs/41/"
+    excludes = ['fix41_spec.jar']
+}
+
+task javadocs41(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/41/"
+    excludes = ['fix41_spec.jar']
+}
+
+task javadocJar41(type: Jar, dependsOn: javadocs41) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix41_spec'
+    from javadoc.destinationDir
+}
+
+task generate42(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX42.xml', '-o', "${buildDir}/standardSpecs/42/", '-p', 'io.github.zlooo.fixyou.fix42', '-j', 'fix42_spec.jar'
+}
+
+task sourcesJar42(type: Jar, dependsOn: generate42) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix42_spec'
+    from "${buildDir}/standardSpecs/42/"
+    excludes = ['fix42_spec.jar']
+}
+
+task javadocs42(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/42/"
+    excludes = ['fix42_spec.jar']
+}
+
+task javadocJar42(type: Jar, dependsOn: javadocs42) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix42_spec'
+    from javadoc.destinationDir
+}
+
+task generate43(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX43.xml', '-o', "${buildDir}/standardSpecs/43/", '-p', 'io.github.zlooo.fixyou.fix43', '-j', 'fix43_spec.jar'
+}
+
+task sourcesJar43(type: Jar, dependsOn: generate43) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix43_spec'
+    from "${buildDir}/standardSpecs/43/"
+    excludes = ['fix43_spec.jar']
+}
+
+task javadocs43(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/43/"
+    excludes = ['fix43_spec.jar']
+}
+
+task javadocJar43(type: Jar, dependsOn: javadocs43) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix43_spec'
+    from javadoc.destinationDir
+}
+
+task generate44(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX44.xml', '-o', "${buildDir}/standardSpecs/44/", '-p', 'io.github.zlooo.fixyou.fix44', '-j', 'fix44_spec.jar'
+}
+
+task sourcesJar44(type: Jar, dependsOn: generate44) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix44_spec'
+    from "${buildDir}/standardSpecs/44/"
+    excludes = ['fix44_spec.jar']
+}
+
+task javadocs44(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/44/"
+    excludes = ['fix44_spec.jar']
+}
+
+task javadocJar44(type: Jar, dependsOn: javadocs44) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix44_spec'
+    from javadoc.destinationDir
+}
+
+task generate50(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX50.xml', '-f', 'src/test/resources/FIXT11.xml', '-o', "${buildDir}/standardSpecs/50/", '-p', 'io.github.zlooo.fixyou.fix50', '-j', 'fix50_spec.jar'
+}
+
+task sourcesJar50(type: Jar, dependsOn: generate50) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix50_spec'
+    from "${buildDir}/standardSpecs/50/"
+    excludes = ['fix50_spec.jar']
+}
+
+task javadocs50(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/50/"
+    excludes = ['fix50_spec.jar']
+}
+
+task javadocJar50(type: Jar, dependsOn: javadocs50) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix50_spec'
+    from javadoc.destinationDir
+}
+
+task generate50SP1(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX50SP1.xml', '-f', 'src/test/resources/FIXT11.xml', '-o', "${buildDir}/standardSpecs/50SP1/", '-p', 'io.github.zlooo.fixyou.fix50sp1', '-j', 'fix50_sp1_spec.jar'
+}
+
+task sourcesJar50SP1(type: Jar, dependsOn: generate50SP1) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix50_sp1_spec'
+    from "${buildDir}/standardSpecs/50SP1/"
+    excludes = ['fix50_sp1_spec.jar']
+}
+
+task javadocs50SP1(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/50SP1/"
+    excludes = ['fix50_sp1_spec.jar']
+}
+
+task javadocJar50SP1(type: Jar, dependsOn: javadocs50SP1) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix50SP1_spec'
+    from javadoc.destinationDir
+}
+
+task generate50SP2(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'io.github.zlooo.spec.generator.FixSpecGenerator'
+    args '-f', 'src/test/resources/FIX50SP2.xml', '-f', 'src/test/resources/FIXT11.xml', '-o', "${buildDir}/standardSpecs/50SP2/", '-p', 'io.github.zlooo.fixyou.fix50sp2', '-j', 'fix50_sp2_spec.jar'
+}
+
+task sourcesJar50SP2(type: Jar, dependsOn: generate50SP2) {
+    archiveClassifier = 'sources'
+    archiveBaseName = 'fix50_sp2_spec'
+    from "${buildDir}/standardSpecs/50SP2/"
+    excludes = ['fix50_sp2_spec.jar']
+}
+
+task javadocs50SP2(type: Javadoc) {
+    classpath = sourceSets.main.compileClasspath
+    source = "${buildDir}/standardSpecs/50SP2/"
+    excludes = ['fix50_sp2_spec.jar']
+}
+
+task javadocJar50SP2(type: Jar, dependsOn: javadocs50SP2) {
+    archiveClassifier = 'javadoc'
+    archiveBaseName = 'fix50SP2_spec'
+    from javadoc.destinationDir
+}
+
+task generateSpecs {
+    dependsOn.addAll(['generate40', 'generate41', 'generate42', 'generate43', 'generate44', 'generate50', 'generate50SP1', 'generate50SP2'])
+}
+
+apply plugin: 'maven-publish'
+tasks.findByName('publishToSonatype').dependsOn('generateSpecs')
+publishing {
+    publications {
+        fix40spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix40_spec'
+            artifact "${buildDir}/standardSpecs/40/fix40_spec.jar"
+            artifact sourcesJar40
+            artifact javadocJar40
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 4.0"
+                description = 'FIXYou spec based on standard Fix 4.0 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix41spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix41_spec'
+            artifact "${buildDir}/standardSpecs/41/fix41_spec.jar"
+            artifact sourcesJar41
+            artifact javadocJar41
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 4.1"
+                description = 'FIXYou spec based on standard Fix 4.1 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix42spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix42_spec'
+            artifact "${buildDir}/standardSpecs/42/fix42_spec.jar"
+            artifact sourcesJar42
+            artifact javadocJar42
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 4.2"
+                description = 'FIXYou spec based on standard Fix 4.2 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix43spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix43_spec'
+            artifact "${buildDir}/standardSpecs/43/fix43_spec.jar"
+            artifact sourcesJar43
+            artifact javadocJar43
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 4.3"
+                description = 'FIXYou spec based on standard Fix 4.3 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix44spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix44_spec'
+            artifact "${buildDir}/standardSpecs/44/fix44_spec.jar"
+            artifact sourcesJar44
+            artifact javadocJar44
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 4.4"
+                description = 'FIXYou spec based on standard Fix 4.4 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix50spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix50_spec'
+            artifact "${buildDir}/standardSpecs/50/fix50_spec.jar"
+            artifact sourcesJar50
+            artifact javadocJar50
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 5.0"
+                description = 'FIXYou spec based on standard Fix 5.0 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix50sp1spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix50_sp1_spec'
+            artifact "${buildDir}/standardSpecs/50SP1/fix50_sp1_spec.jar"
+            artifact sourcesJar50SP1
+            artifact javadocJar50SP1
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 5.0 SP1"
+                description = 'FIXYou spec based on standard Fix 5.0 SP1 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+        fix50sp2spec(MavenPublication) {
+            groupId 'io.github.zlooo.fixyou'
+            artifactId 'fix50_sp2_spec'
+            artifact "${buildDir}/standardSpecs/50SP2/fix50_sp2_spec.jar"
+            artifact sourcesJar50SP2
+            artifact javadocJar50SP2
+            version specsVersion
+            pom {
+                name = "FIXYou - Standard Spec Fix 5.0 SP2"
+                description = 'FIXYou spec based on standard Fix 5.0 SP2 dictionary'
+                url = 'https://github.com/zlooo/FIXYou'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'zlooo'
+                        name = 'Krzysztof Dworakowski'
+                        email = 'zlooo.inc@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    developerConnection = 'scm:git:https://github.com/zlooo/FIXYou.git'
+                    url = 'https://github.com/zlooo/FIXYou'
+                }
+            }
+        }
+    }
+}
+
+apply plugin: 'signing'
+signing {
+    sign publishing.publications.toArray() as Publication[]
+}

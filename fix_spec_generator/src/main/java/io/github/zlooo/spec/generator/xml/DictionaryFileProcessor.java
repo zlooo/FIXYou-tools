@@ -154,7 +154,10 @@ public class DictionaryFileProcessor {
         result.put("MONTHYEAR", FieldType.CHAR_ARRAY);
         result.put("UTCTIMESTAMP", FieldType.TIMESTAMP);
         result.put("UTCTIMEONLY", FieldType.CHAR_ARRAY);
+        result.put("TIME", FieldType.CHAR_ARRAY);
         result.put("UTCDATEONLY", FieldType.CHAR_ARRAY);
+        result.put("UTCDATE", FieldType.CHAR_ARRAY);
+        result.put("DATE", FieldType.CHAR_ARRAY);
         result.put("LOCALMKTDATE", FieldType.CHAR_ARRAY);
         result.put("TZTIMEONLY", FieldType.CHAR_ARRAY);
         result.put("TZTIMESTAMP", FieldType.CHAR_ARRAY);
