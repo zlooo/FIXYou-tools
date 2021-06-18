@@ -16,7 +16,7 @@ class DictionaryFileProcessorTest extends Specification {
 
     def "should process default fix 50sp2 dictionary"() {
         setup:
-        JAXBElement<FixType> fix50sp2 = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller().unmarshal(XMLModelTest.STANDARD_DICTIONARIES.find { file -> file.getName() == "FIX50SP2.xml" })
+        JAXBElement<FixType> fix50sp2 = JAXBContext.newInstance("io.github.zlooo.spec.generator.xml.model").createUnmarshaller().unmarshal(XMLModelTest.STANDARD_DICTIONARIES.find { file -> file.getName() == "FIX50_sp2.xml" })
 
         when:
         def result = dictionaryFileProcessor.process(fix50sp2.getValue())
@@ -61,6 +61,6 @@ class DictionaryFileProcessorTest extends Specification {
         result!=null
 
         where:
-        dictionaryFile<<["FIX40.xml", "FIX41.xml", "FIX42.xml", "FIX43.xml", "FIX44.xml", "FIX50.xml", "FIX50SP1.xml", "FIX50SP2.xml", "FIXT11.xml"]
+        dictionaryFile<<["FIX40.xml", "FIX41.xml", "FIX42.xml", "FIX43.xml", "FIX44.xml", "FIX50.xml", "FIX50_sp1.xml", "FIX50_sp2.xml", "FIXT11.xml"]
     }
 }
